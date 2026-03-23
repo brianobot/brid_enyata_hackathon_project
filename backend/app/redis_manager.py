@@ -20,7 +20,7 @@ class RedisManager:
         value_as_string = json.dumps(value)
         self.redis_client.set(name=key, value=value_as_string, ex=ttl)
 
-    def get_json_item(self, key: str, default: None = None) -> dict[str, Any] | None:
+    def get_json_item(self, key: str, default: Any | None = None):
         value = self.redis_client.get(name=key)
 
         if value is None:

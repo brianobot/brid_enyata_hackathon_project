@@ -18,3 +18,6 @@ class Settings(BaseSettings):
     MAIL_PORT: str  # required environment variable
     MAIL_SERVER: str  # required environment variable
     MAIL_FROM_NAME: str  # required environment variable
+    
+    INTERSWITCH_CLIENT_ID: str
+    INTERSWITCH_CLIENT_SECRET: str
