@@ -1,7 +1,9 @@
 import { useState } from "react";
-// Added Loader2 to the import
 import { Shield, Eye, EyeOff, Loader2 } from "lucide-react"; 
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast';
+import api from '../../api/axios'; // Ensure the path to your axios instance is correct
+
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -34,27 +36,21 @@ export default function SignupPage() {
     password: form.password
   };
 
-  try {
-    const response = await fetch("https://0551-102-90-98-19.ngrok-free.app/v1/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(signupData),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      navigate("/login");
-    } else {
-      // Log the specific error from the backend (e.g., "password too short")
-      console.error("Backend Error Details:", data);
-      alert(data.message || "Signup failed: Check the console for details.");
+  toast.promise(
+    api.post("/auth/signup", signupData),
+    {
+      loading: 'Creating your account...',
+      success: () => {
+        navigate("/login");
+        return "Account created! You can now log in.";
+      },
+      error: (err) => {
+        // Specifically catch the 400 "Email already registered" error
+        const message = err.response?.data?.detail || "Signup failed. Please try again.";
+        return `Error: ${message}`;
+      },
     }
-  } catch (error) {
-    console.error("Network error:", error);
-  } finally {
-    setLoading(false);
-  }
+  );
 };
 
   return (

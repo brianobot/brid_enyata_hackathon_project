@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Shield, Eye, EyeOff, Loader2 } from "lucide-react"; // Import Loader2
+import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { toast } from 'react-hot-toast'
 import { Link, useNavigate } from "react-router-dom";
+import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,37 +18,34 @@ const handleLogin = async (e) => {
   e.preventDefault();
   setLoading(true);
 
-
   const formData = new URLSearchParams();
   formData.append("username", email);
   formData.append("password", password);
 
-  try {
-    const response = await fetch("https://0551-102-90-98-19.ngrok-free.app/v1/auth/token", {
-      method: "POST",
+toast.promise(
+    api.post("/auth/token", formData, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      localStorage.setItem("token", data.access_token); 
-      navigate("/");
-    } else {
-      alert(data.detail?.[0]?.msg || "Login failed");
+    }),
+    {
+      loading: 'Verifying credentials...',
+      success: (response) => {
+        // Handle successful login
+        login(response.data.access_token); 
+        navigate("/dashboard");
+        return "Welcome back!";
+      },
+      error: (err) => {
+        // Handle specific error messages from the backend
+        const message = err.response?.data?.detail?.[0]?.msg || "Invalid email or password";
+        return `Login failed: ${message}`;
+      },
     }
-  } catch (error) {
-    console.error("Login error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
 
-      {/* PAGE BODY */}
       <main className="flex flex-col items-center pt-16 pb-20 px-4">
         {/* Heading */}
         <h1 className="text-4xl font-semibold text-gray-800 mb-2">Welcome Back!</h1>
@@ -66,7 +67,6 @@ const handleLogin = async (e) => {
 
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-gray-800 mb-1.5">
                 Email
@@ -146,26 +146,26 @@ const handleLogin = async (e) => {
 
             {/* Login button */}
             <button 
-    type="submit"
-    disabled={loading}
-    className="w-full flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-70"
-  >
-    {loading ? (
-      <>
-        <Loader2 className="w-4 h-4 animate-spin" />
-        Logging in...
-      </>
-    ) : (
-      "Login"
-    )}
-  </button>
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-70"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
+            </button>
 
             {/* Sign up link */}
             <p className="text-center text-sm text-gray-400 mt-1">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-blue-600 font-medium hover:underline">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-blue-600 font-medium hover:underline">
                 Sign Up
-                </Link>
+              </Link>
             </p>
           </form>
         </div>
