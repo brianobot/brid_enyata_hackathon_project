@@ -1,12 +1,14 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import { AuthProvider } from './context/AuthContext.jsx';
+import { AuthProvider } from './context/AuthProvider.jsx';
 import SignupPage from './pages/Auth/Signup' 
 import LoginPage from './pages/Auth/LoginPage'
 import LandingPage from './pages/LandingPage/LandingPage'
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
+import PublicProfile from './pages/Profile/PublicProfile.jsx';
+import VerificationFlow from './pages/Verification/VerificationFlow';
 
 const App = () => {
   return (
@@ -17,13 +19,21 @@ const App = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          {/* Redirect unknown routes back home */}
+          <Route path="/profile/:businessId" element={<PublicProfile />} />
           <Route path="*" element={<Navigate to="/" />} />
           <Route 
             path="/dashboard" 
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/verify" 
+            element={
+              <ProtectedRoute>
+                <VerificationFlow />
               </ProtectedRoute>
             } 
           />

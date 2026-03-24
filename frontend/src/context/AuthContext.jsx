@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios'; 
-import { AuthContext } from './AuthContext'; // Import from your .js file
+import { AuthContext } from './AuthContext.js'; // Import from your .js file
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         // Axios interceptor will automatically add the Bearer token
-        const response = await api.get('/users/me'); 
+        const response = await api.get('/auth/me'); 
 
         if (response.status === 200) {
           setToken(savedToken);
