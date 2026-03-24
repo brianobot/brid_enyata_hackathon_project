@@ -9,6 +9,9 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import PublicProfile from './pages/Profile/PublicProfile.jsx';
 import VerificationFlow from './pages/Verification/VerificationFlow';
+import SettingsPage from './pages/settings/SettingsPage.jsx';
+import UserProfile from './pages/Profile/UserProfile.jsx';
+import NotificationCenter from './pages/NotificationCenter.jsx';
 
 const App = () => {
   return (
@@ -34,6 +37,30 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <VerificationFlow />
+              </ProtectedRoute>
+            } 
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/settings/profile" 
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/notifications" 
+            element={
+              <ProtectedRoute>
+                <NotificationCenter />
               </ProtectedRoute>
             } 
           />

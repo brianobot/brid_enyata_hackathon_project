@@ -106,7 +106,7 @@ const NAV_ITEMS = [
   { label: "Dashboard",    icon: LayoutDashboard, to: "/dashboard" },
   { label: "Verification", icon: ShieldCheck,     to: "/verify"    },
   { label: "Documents",    icon: FileText,        to: "/documents" },
-  { label: "Profile",      icon: User,            to: "/profile"   },
+  { label: "Profile",      icon: User,            to: "/settings/profile"   },
   { label: "Settings",     icon: Settings,        to: "/settings"  },
 ];
 
