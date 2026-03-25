@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   User, Mail, Phone, MapPin, Camera, ShieldCheck, 
-  Key, Bell, CreditCard, ChevronRight, Save
+  Key, Bell, CreditCard, X, ChevronRight, Save
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -19,6 +19,13 @@ export default function UserProfile() {
 
   return (
     <div className="p-8 max-w-5xl mx-auto w-full space-y-8 animate-in fade-in duration-500">
+      <Link 
+      to="/dashboard" 
+      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+    >
+      <span>Exit to Dashboard</span>
+      <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+    </Link>
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-center gap-6">
@@ -26,9 +33,7 @@ export default function UserProfile() {
             <div className="w-24 h-24 md:w-32 md:h-32 bg-blue-100 rounded-3xl flex items-center justify-center text-3xl font-black text-blue-900 border-4 border-white shadow-xl">
               {user?.first_name?.[0]}{user?.last_name?.[0] || 'U'}
             </div>
-            <button className="absolute -bottom-2 -right-2 p-2.5 bg-white rounded-xl shadow-lg border border-gray-100 text-blue-900 hover:bg-gray-50 transition-all">
-              <Camera className="w-5 h-5" />
-            </button>
+
           </div>
           <div>
             <h1 className="text-3xl font-black text-gray-900">
