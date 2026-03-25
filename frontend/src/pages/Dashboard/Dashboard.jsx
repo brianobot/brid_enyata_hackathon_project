@@ -23,6 +23,8 @@ import {
   Lock,
   Eye,
   X,
+  Upload,
+  TrendingUp,
   Building2,
   AlertCircle,
   Info,
@@ -65,6 +67,13 @@ const MOCK_VERIFICATION_STEPS = [
     iconColor: "text-gray-400",
     iconBg: "bg-gray-100",
   },
+];
+
+const MOCK_VERIFICATION_ITEMS = [
+  { id: 1, title: "CAC Registration",     desc: "Upload your CAC documents", updatedDate: "Jan 2026" },
+  { id: 2, title: "Tax Compliance",        desc: "Upload your tax documents",  updatedDate: "Feb 2026" },
+  { id: 3, title: "Director Verification", desc: "Verify director identity",   updatedDate: "Jan 2026" },
+  { id: 4, title: "Financial Records",     desc: "Upload financial documents", updatedDate: "Jan 2026" },
 ];
 
 const MOCK_NOTIFICATIONS = [
@@ -114,6 +123,232 @@ const stepsRemaining = MOCK_VERIFICATION_STEPS.filter(
   (s) => s.status !== "completed"
 ).length;
 
+// ── PRE-VERIFICATION VIEW ──
+function PreVerificationView({ user }) {
+  // Use real user data or fallback to mock
+  const displayName = user?.first_name 
+    ? `${user.first_name} ${user.last_name || ''}`.trim() 
+    : MOCK_USER.name;
+  const profileComplete = user?.profile_complete ?? MOCK_USER.profileComplete;
+
+  const total = MOCK_VERIFICATION_ITEMS.length;
+  const done  = 0; // replace with real completed count from API
+
+  return (
+    <div className="space-y-5">
+
+      {/* Welcome banner */}
+      <div className="bg-slate-100 rounded-2xl px-8 py-10 min-h-[220px] flex flex-col justify-center">
+        <h2 className="text-4xl font-black text-gray-900 mb-3">Welcome, {displayName}</h2>
+        <p className="text-sm text-gray-500 leading-relaxed mb-7 max-w-md">
+          Your profile is {profileComplete}% complete. Start your identity
+          verification today to unlock the full potential of interverify
+        </p>
+        <div>
+          <Link to="/verify">
+            <button className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors">
+              Start Verfication
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Verification Progress */}
+      <div className="bg-white rounded-2xl border border-gray-100 px-6 py-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold text-gray-900">Verification Progress</h3>
+          <span className="text-xs text-gray-400">{done} of {total} completed</span>
+        </div>
+        <div className="w-full h-1.5 bg-gray-100 rounded-full mb-2 overflow-hidden">
+          <div
+            className="h-full bg-gray-400 rounded-full transition-all duration-500"
+            style={{ width: `${(done / total) * 100}%` }}
+          />
+        </div>
+        <p className="text-xs text-gray-400">complete the steps to earn your Trust Seal</p>
+      </div>
+
+      {/* Verification steps list */}
+      <div className="bg-white rounded-2xl border border-gray-100 px-6 py-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-2">Complete you verification</h3>
+        <div className="divide-y divide-gray-50">
+          {MOCK_VERIFICATION_ITEMS.map((item) => (
+            <div key={item.id} className="flex items-center justify-between py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <Upload className="w-4 h-4 text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">{item.title}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+              <Link to="/verify">
+                <button className="flex items-center gap-1 text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors">
+                  Start <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats row — empty/locked */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* Trust Score */}
+        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col items-center justify-center text-center min-h-[200px]">
+          <p className="text-xs text-gray-400 mb-3">Trust Score</p>
+          <p className="text-4xl font-black text-gray-300">—/100</p>
+          <p className="text-xs text-gray-400 mt-3 leading-snug max-w-[140px]">
+            Complete your verification to generate your global trust score.
+          </p>
+        </div>
+
+        {/* Recommendations — locked */}
+        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col min-h-[200px]">
+          <p className="text-xs text-gray-400 mb-3">Recommendations</p>
+          <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-2" />
+          <div className="h-1.5 bg-gray-100 rounded-full w-1/2 mb-auto" />
+          <div className="flex items-center gap-2 mt-4">
+            <Lock className="w-4 h-4 text-blue-400" />
+            <p className="text-sm font-bold text-blue-600">Unlock Feature</p>
+          </div>
+        </div>
+
+        {/* Profile Views */}
+        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col min-h-[200px]">
+          <p className="text-xs text-gray-400 mb-3">profile Views</p>
+          <p className="text-4xl font-black text-gray-300 mt-1">0</p>
+          <p className="text-xs text-gray-400 mt-3 leading-snug">
+            Visibility begins after verification
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── POST-VERIFICATION VIEW (mock, as before but with safe user fields) ──
+function PostVerificationView({ user }) {
+  const displayName = user?.first_name 
+    ? `${user.first_name} ${user.last_name || ''}`.trim() 
+    : MOCK_USER.name;
+  // Mock values – replace with real API data when available
+  const mockStats = {
+    trustScore: 78,
+    trustScoreDelta: "+12",
+    recommendations: 8,
+    recommendationsPending: 2,
+    profileViews: 1247,
+    profileViewsDelta: "+18%",
+    profileComplete: 85,
+    lastUpdated: "Mar 2026",
+  };
+
+  return (
+    <div className="space-y-5">
+
+      {/* Verified banner */}
+      <div className="bg-green-50 border border-green-100 rounded-2xl px-6 py-5 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <ShieldCheck className="w-5 h-5 text-green-600" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-900">Your Business is verified</p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Your business profile is active and visible to potential clients. Last updated {mockStats.lastUpdated}.
+            </p>
+            <div className="w-44 h-1.5 bg-green-200 rounded-full mt-3 overflow-hidden">
+              <div className="h-full bg-green-500 rounded-full w-full" />
+            </div>
+          </div>
+        </div>
+        <span className="flex items-center gap-1.5 text-xs font-semibold text-green-600 bg-white border border-green-200 px-3 py-1.5 rounded-full flex-shrink-0">
+          <CheckCircle2 className="w-3.5 h-3.5" /> Verified
+        </span>
+      </div>
+
+      {/* Stats — live */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-gray-500">Trust Score</p>
+            <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
+              <TrendingUp className="w-3 h-3" /> {mockStats.trustScoreDelta}
+            </span>
+          </div>
+          <p className="text-4xl font-black text-gray-900 mt-1">{mockStats.trustScore}</p>
+          <p className="text-xs text-gray-400 mt-3 leading-snug">
+            HINT : Complete pending verifications to increase your score
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-gray-500">Recommendations</p>
+            <span className="w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {mockStats.recommendationsPending}
+            </span>
+          </div>
+          <p className="text-4xl font-black text-gray-900 mt-1">{mockStats.recommendations}</p>
+          <p className="text-xs text-gray-400 mt-3">{mockStats.recommendationsPending} Pending</p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-gray-500">profile Views</p>
+            <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
+              <TrendingUp className="w-3 h-3" /> {mockStats.profileViewsDelta}
+            </span>
+          </div>
+          <p className="text-4xl font-black text-gray-900 mt-1">{mockStats.profileViews.toLocaleString()}</p>
+        </div>
+      </div>
+
+      {/* Profile Completion */}
+      <div className="bg-white rounded-2xl border border-gray-100 px-6 py-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold text-gray-900">Profile Completion</h3>
+          <button className="flex items-center gap-1 text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors">
+            Complete profile <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+        <div className="w-full h-2 bg-gray-100 rounded-full mb-3 overflow-hidden">
+          <div
+            className="h-full bg-gray-900 rounded-full transition-all duration-500"
+            style={{ width: `${mockStats.profileComplete}%` }}
+          />
+        </div>
+        <p className="text-xs text-gray-500">
+          Your profile is almost complete! Add more information to increase visibility and trust.
+        </p>
+      </div>
+
+      {/* Verification Overview */}
+      <div className="bg-white rounded-2xl border border-gray-100 px-6 py-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-4">Verification Overview</h3>
+        <div className="divide-y divide-gray-50">
+          {MOCK_VERIFICATION_ITEMS.map((item) => (
+            <div key={item.id} className="flex items-center justify-between py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">{item.title}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Updated {item.updatedDate}</p>
+                </div>
+              </div>
+              <span className="text-xs font-semibold text-green-600">Verified</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── STATUS CONFIG ─────────────────────────────────────────────────────────────
 const STATUS = {
   completed:   { label: "COMPLETED",    color: "text-green-500",  dot: "bg-green-500"  },
@@ -130,14 +365,23 @@ function NotifIcon({ type }) {
 
 // ── MAIN COMPONENT ────────────────────────────────────────────────────────────
 export default function Dashboard() {
+
+  // ── DEV TOGGLE ────────────────────────────────────────────────────────────
+  // const [isVerified, setIsVerified] = useState(false);
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [notifOpen, setNotifOpen]               = useState(false);
   const [notifications, setNotifications]       = useState(MOCK_NOTIFICATIONS);
   const [activeNav, setActiveNav]               = useState("Dashboard");
 
-  const { logout, user } = useAuth();
+  const { logout, user, loading } = useAuth();  // <-- also get loading
 
-  const initials = user ? `${user.first_name[0]}${user.last_name[0]}` : "??";
+  // Safe initials
+  const initials = user?.first_name && user?.last_name
+    ? `${user.first_name[0]}${user.last_name[0]}`
+    : "??";
+
+  const isVerified = !!(user?.business_name && user?.business_cac_number && user?.business_tin);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -148,6 +392,30 @@ export default function Dashboard() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
+
+  // Show a loading spinner while auth is initializing
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-500">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is still null after loading, maybe redirect to login (but AuthProvider should handle that)
+  if (!user) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <p className="text-gray-500">Unable to load user data. Please try logging in again.</p>
+          <Link to="/login" className="mt-4 inline-block text-blue-600 hover:underline">Go to login</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
@@ -194,7 +462,7 @@ export default function Dashboard() {
               </Link>
             );
           })}
-          {/* Logout Button added at the bottom of the navigation section */}
+          {/* Logout Button */}
           <button
             onClick={logout}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors w-full text-red-500 hover:bg-red-50 mt-auto
@@ -234,197 +502,56 @@ export default function Dashboard() {
       {/* ── MAIN AREA ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
 
-        {/* ── TOPBAR ── */}
-        <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between flex-shrink-0">
-          <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
+        {/* Topbar */}
+        <header className="bg-white border-b border-gray-50 px-6 py-3.5 flex items-center justify-between flex-shrink-0">
+          <div>
+            <h1 className="text-xl font-black text-gray-900">Dashboard</h1>
+            <p className="text-xs text-gray-400 mt-0.5">Welcome back! Here's your verification status and profile overview.</p>
+          </div>
 
-          <div className="flex items-center gap-3">
-            {/* Search */}
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 w-52">
-              <Search className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-              <input
-                type="text"
-                placeholder="Search verification..."
-                className="bg-transparent text-xs text-gray-600 placeholder-gray-400 outline-none w-full"
-              />
-            </div>
+          <div className="flex items-center gap-2">
+            {/* DEV toggle — remove when wiring real API */}
+            {/* <button
+              onClick={() => setIsVerified(!isVerified)}
+              title="Dev toggle — remove when API is ready"
+              className="text-[10px] font-bold px-3 py-1.5 rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-blue-300 hover:text-blue-500 transition-colors"
+            >
+              {isVerified ? "Pre-verify view" : "Post-verify view"}
+            </button> */}
 
             {/* Bell */}
             <button
               onClick={() => setNotifOpen(true)}
               className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
             >
-              <Bell className="w-4.5 h-4.5 text-gray-500" />
+              <Bell className="w-4 h-4 text-gray-500" />
               {unreadCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
               )}
             </button>
 
-            {/* Help */}
-            <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors">
-              <HelpCircle className="w-4.5 h-4.5 text-gray-500" />
-            </button>
-
             {/* Avatar */}
-            <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center">
-              <span className="text-xs font-bold text-orange-600">{initials}</span>
+            <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+              <span className="text-xs font-bold text-gray-600">{initials}</span>
             </div>
           </div>
         </header>
 
-        {/* ── SCROLLABLE CONTENT ── */}
-        <main className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto px-6 py-5">
+          {isVerified
+            ? <PostVerificationView user={user} />
+            : <PreVerificationView  user={user} />}
 
-          {/* ── WELCOME BANNER ── */}
-          <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 rounded-2xl border border-gray-100 overflow-hidden flex items-center justify-between px-8 py-8 relative min-h-[200px]">
-            <div className="max-w-md">
-              <h2 className="text-3xl font-black text-gray-900 mb-3">
-                Welcome, {user?.first_name || 'User'}
-              </h2>
-              <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                Your profile is {MOCK_USER.profileComplete}% complete. Start your identity
-                verification today to unlock the full potential of InterVerify.
-              </p>
-              <div className="flex items-center gap-3">
-                <Link to="/verify">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
-                    Start Verification
-                  </button>
-                </Link>
-                <button className="border border-gray-200 bg-white text-gray-700 text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-gray-50 transition-colors">
-                  View Roadmap
-                </button>
-              </div>
-            </div>
 
-            {/* Decorative image placeholder */}
-            <div className="absolute right-8 top-1/2 -translate-y-1/2 w-36 h-36 rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center flex-shrink-0">
-              <div className="flex flex-col items-center gap-3 opacity-40">
-                <div className="w-10 h-14 bg-white rounded-lg shadow-sm" />
-                <div className="w-7 h-10 bg-white rounded-lg shadow-sm -mt-6 ml-8" />
-              </div>
-            </div>
-          </div>
-
-          {/* ── VERIFICATION STEPS ── */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-base font-bold text-gray-900">Verification Steps</h3>
-                <p className="text-xs text-gray-400 mt-0.5">Complete these steps to earn your Trust Seal.</p>
-              </div>
-              <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full">
-                {stepsRemaining} Steps Remaining
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              {MOCK_VERIFICATION_STEPS.map((step) => {
-                const Icon   = step.icon;
-                const status = STATUS[step.status];
-                return (
-                  <div
-                    key={step.id}
-                    className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-4 hover:shadow-sm transition-shadow"
-                  >
-                    {/* Top row */}
-                    <div className="flex items-start justify-between">
-                      <div className={`w-10 h-10 ${step.iconBg} rounded-xl flex items-center justify-center`}>
-                        <Icon className={`w-5 h-5 ${step.iconColor}`} />
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                        <span className={`text-[10px] font-bold tracking-widest ${status.color}`}>
-                          {status.label}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1">
-                      <h4 className="text-sm font-bold text-gray-900 mb-1">{step.title}</h4>
-                      <p className="text-xs text-gray-400 leading-relaxed">{step.description}</p>
-                    </div>
-
-                    {/* Action button */}
-                    <div>
-                      {step.status === "completed" && (
-                        <div className="flex items-center gap-1.5 text-xs text-green-600 font-semibold">
-                          <CheckCircle2 className="w-4 h-4" />
-                          Verified
-                        </div>
-                      )}
-                      {step.status === "in_progress" && (
-                        <Link to="/verify">
-                          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-1.5">
-                            Resume <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </Link>
-                      )}
-                      {step.status === "not_started" && (
-                        <Link to="/verify">
-                          <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-2.5 rounded-xl transition-colors">
-                            Start
-                          </button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── STATS ROW ── */}
-          <div className="grid grid-cols-3 gap-4">
-
-            {/* Trust Score */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-center justify-center text-center min-h-[180px]">
-              <BarChart2 className="w-8 h-8 text-gray-200 mb-3" />
-              <p className="text-[10px] font-bold tracking-widest text-gray-400 mb-2">TRUST SCORE</p>
-              <p className="text-4xl font-black text-gray-200">—/100</p>
-              <p className="text-xs text-gray-400 mt-2 leading-snug">
-                Complete your verification to generate your global trust score.
-              </p>
-            </div>
-
-            {/* Recommendations */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between min-h-[180px]">
-              <p className="text-[10px] font-bold tracking-widest text-gray-400">RECOMMENDATIONS</p>
-              <div className="flex flex-col items-start gap-2 mt-4">
-                <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
-                  <Lock className="w-4 h-4 text-blue-400" />
-                </div>
-                <p className="text-sm font-bold text-blue-600">Unlock Feature</p>
-                <p className="text-xs text-gray-400 leading-snug">
-                  Complete verification to get personalised business recommendations.
-                </p>
-              </div>
-            </div>
-
-            {/* Profile Views */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col justify-between min-h-[180px]">
-              <p className="text-[10px] font-bold tracking-widest text-gray-400">PROFILE VIEWS</p>
-              <div className="flex-1 flex flex-col items-start justify-center mt-3">
-                <p className="text-4xl font-black text-gray-300">0</p>
-                <p className="text-xs text-gray-400 leading-snug mt-2">
-                  Visibility begins after seal approval.
-                </p>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full w-full mt-3" />
-            </div>
-          </div>
-
-          {/* ── FOOTER ── */}
-          <div className="flex items-center justify-between pt-2 pb-1 border-t border-gray-100">
+          {/* Footer */}
+          <div className="flex items-center justify-between pt-6 mt-4 border-t border-gray-100">
             <div className="flex items-center gap-4">
               <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Privacy Policy</a>
               <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Terms of Service</a>
               <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Security Audit</a>
             </div>
-            <p className="text-xs text-gray-400">
-              © 2024 InterVerify Inc. All connections are end-to-end encrypted.
-            </p>
+            <p className="text-xs text-gray-400">© 2024 InterVerify Inc. All connections are end-to-end encrypted.</p>
           </div>
         </main>
       </div>
