@@ -1,4 +1,4 @@
-import logo from './ivnamedlogo.svg'
+import logo from './ivnamedlogo.png'
 
 export const assets = {
     'logo': logo

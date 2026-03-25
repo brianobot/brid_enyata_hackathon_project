@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-import api from '../api/axios'; // Use the new axios instance we created
+import api from '../api/axios'; 
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null); // This holds John Wick's data
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -17,16 +18,15 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        // Using the Axios instance handles the BaseURL and Headers automatically
-        const response = await api.get('/users/me');
-
+        const response = await api.get('/auth/me');
         if (response.status === 200) {
           setToken(savedToken);
           setIsAuthenticated(true);
+          setUser(response.data); // SUCCESS: Setting the user data here
         }
       } catch (error) {
         console.error("Token verification failed:", error);
-        // If status is 401, the Axios interceptor will handle the logout
+        localStorage.removeItem('token');
       } finally {
         setLoading(false);
       }
@@ -39,16 +39,21 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
     setIsAuthenticated(true);
+    // After login, we should fetch the user immediately
+    api.get('/auth/me')
+      .then(res => setUser(res.data));
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
+    setUser(null);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated, login, logout, loading }}>
+    // IMPORTANT: 'user' MUST be included in this value object
+    <AuthContext.Provider value={{ token, isAuthenticated, user, login, logout, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

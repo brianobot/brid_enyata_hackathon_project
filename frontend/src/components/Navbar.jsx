@@ -9,7 +9,9 @@ const Navbar = () => {
               <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center justify-center">
-                    <img src={assets.logo} alt="Logo" className="w-4 h-4" />
+                    <Link to="/">
+                    <img src={assets.logo} alt="Logo" className="w-30 h-[55px]" />
+                    </Link>
                   </div>
                 </div>
                 <div className="hidden md:flex items-center gap-6">
@@ -29,7 +31,7 @@ const Navbar = () => {
                         Login
                     </Link>
                   <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
-                    <Link to="/signup" className="">
+                    <Link to="/signup">
                         Get Started
                     </Link>
                   </button>
