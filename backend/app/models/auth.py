@@ -34,11 +34,13 @@ class User(AbstractBase):
     business_cac_number: Mapped[str | None]
     business_registration_date: Mapped[datetime | None]
     business_directors: Mapped[list[dict[str, str]] | None] = mapped_column(
-        MutableList.as_mutable(JSON), default=list
+        MutableList.as_mutable(JSON), 
+        default=None
     )
     
     documents: Mapped[dict[str, str] | None] = mapped_column(
-        MutableDict.as_mutable(JSON), default=list
+        MutableDict.as_mutable(JSON), 
+        default=None
     )
     
     
