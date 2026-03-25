@@ -1,0 +1,21 @@
+import factory
+from faker import Faker
+
+from app.models import User as UserDB
+from app.services.auth import get_password_hash
+from conftest import TestingSessionLocal
+
+faker = Faker()
+
+
+class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:  # type: ignore
+        model = UserDB
+        sqlalchemy_session_factory = TestingSessionLocal
+        sqlalchemy_session_persistence = "commit"
+
+    email = factory.faker.Faker("email")
+    password = get_password_hash("password")
+    first_name = faker.first_name()
+    last_name = faker.last_name()
+    business_name = faker.name()
