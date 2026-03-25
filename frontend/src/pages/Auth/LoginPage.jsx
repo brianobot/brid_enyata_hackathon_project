@@ -22,6 +22,22 @@ const handleLogin = async (e) => {
   formData.append("username", email);
   formData.append("password", password);
 
+  try {
+    const response = await api.post("/auth/token", formData, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    });
+    login(response.data.access_token);
+    navigate("/dashboard");
+    toast.success("Welcome back!");
+  } catch (err) {
+    // Extract error message
+    const message = err.response?.data?.detail?.[0]?.msg || "Invalid email or password";
+    toast.error(`Login failed: ${message}`);
+  } finally {
+    setLoading(false);
+  }
+
+
 toast.promise(
     api.post("/auth/token", formData, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },

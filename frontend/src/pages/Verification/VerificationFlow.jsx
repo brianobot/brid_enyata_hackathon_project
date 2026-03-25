@@ -1,8 +1,12 @@
-import { useState, useRef } from "react";
-import {
+import { useState, useRef, useEffect } from "react";
+import { 
   Shield, LayoutGrid, FileText, Users, Upload, ClipboardCheck,
-  ChevronDown, CheckCircle, AlertCircle, Plus, Trash2, File, X
-} from "lucide-react";
+  ChevronDown, CheckCircle, AlertCircle, Plus, Trash2, File, X, Loader2 
+} from "lucide-react"
+import { toast } from 'react-hot-toast';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../api/axios";
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
 const INDUSTRIES = [
@@ -21,34 +25,16 @@ const STEPS = [
   { id: 5, label: "Review & Submit",    icon: ClipboardCheck },
 ];
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────────────
-const INITIAL_DATA = {
-  // Step 1
-  businessName: "Techinterverify Solutions Ltd",
-  industry: "Technology & Software",
-  businessEmail: "info@techinterverifysolutions.com",
-  yearFounded: "2015",
-  businessPhone: "+234 802 345 6789",
-  businessAddress: "12 Admiralty Way, Lekki Phase 1, Lagos, Nigeria",
-  employeeCount: "51 – 200",
-  website: "www.techinterverifysolutions.com",
-  businessDescription:
-    "A leading software development and business verification platform helping organisations establish trust and credibility across Nigeria and Africa.",
-  // Step 2
-  cacNumber: "RC 1234567",
-  tin: "123456789-9002",
-  registrationDate: "15/01/2026",
-  // Step 3
-  directors: [
-    { fullName: "Isreal Inyang",   position: "CEO", email: "isrealinyang@techinterverify.com", phone: "+234 899 3333 333" },
-    { fullName: "David Godswill",  position: "CEO", email: "davidgodswill@techinterverify.com", phone: "+234 899 3433 333" },
-  ],
-  // Step 4
-  documents: {
-    cac:          { name: "cac-certificate.pdf",   file: null, uploaded: true },
-    taxClearance: { name: "tax-clearance-2024.pdf", file: null, uploaded: true },
-    proofAddress: { name: "proofofaddress.pdf",    file: null, uploaded: true },
-  },
+const mapEmployeeCount = (range) => {
+  const mapping = {
+    "1 – 10": 1,
+    "11 – 50": 11,
+    "51 – 200": 51,
+    "201 – 500": 201,
+    "501 – 1,000": 501,
+    "1,000+": 1000,
+  };
+  return mapping[range] || 0;
 };
 
 // ─── SHARED UI COMPONENTS ────────────────────────────────────────────────────
@@ -93,32 +79,6 @@ function SelectInput({ value, onChange, options, placeholder }) {
       </select>
       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
     </div>
-  );
-}
-
-function Navbar() {
-  return (
-    <nav className="bg-white border-b border-gray-200 px-8 py-3.5 flex items-center justify-between">
-      <div className="flex items-center gap-1.5">
-        <div className="relative w-11 h-9">
-          <div className="absolute top-1 left-0.5 w-5 h-5 rounded-full border-2 border-green-500 bg-white" />
-          <svg viewBox="0 0 44 34" className="absolute top-0 left-0 w-full h-full" fill="none">
-            <polyline points="7,18 18,28 37,5" stroke="#1e3a6e" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-      </div>
-      <div className="flex items-center gap-8">
-        {["Home","Features","How it works","Pricing"].map(l => (
-          <a key={l} href="#" className="text-sm text-gray-600 hover:text-gray-900">{l}</a>
-        ))}
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="text-sm font-medium text-gray-700">Login</button>
-        <button className="flex items-center gap-2 bg-blue-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
-          <Shield className="w-3.5 h-3.5" /> Get Verified
-        </button>
-      </div>
-    </nav>
   );
 }
 
@@ -442,7 +402,7 @@ function KV({ label, value }) {
   );
 }
 
-function Step5({ data, onGoToStep, onBack, onSubmit }) {
+function Step5({ data, onGoToStep, onBack, onSubmit, isUploading }) {
   const [confirmed, setConfirmed] = useState(false);
 
   return (
@@ -550,11 +510,14 @@ function Step5({ data, onGoToStep, onBack, onSubmit }) {
         </button>
         <button
           onClick={confirmed ? onSubmit : undefined}
+          disabled={!confirmed || isUploading}
           className={`text-white text-sm font-semibold px-8 py-2.5 rounded-xl transition-colors ${
-            confirmed ? "bg-blue-900 hover:bg-blue-800 cursor-pointer" : "bg-blue-300 cursor-not-allowed"
+            (confirmed && !isUploading)
+              ? "bg-blue-900 hover:bg-blue-800 cursor-pointer"
+              : "bg-blue-300 cursor-not-allowed"
           }`}
         >
-          Submit Application
+          {isUploading ? "Submitting..." : "Submit Application"}
         </button>
       </div>
     </div>
@@ -563,6 +526,7 @@ function Step5({ data, onGoToStep, onBack, onSubmit }) {
 
 // ─── SUCCESS SCREEN ───────────────────────────────────────────────────────────
 function SuccessScreen() {
+  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
       <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -572,8 +536,12 @@ function SuccessScreen() {
       <p className="text-gray-500 text-sm max-w-sm mx-auto mb-2 leading-relaxed">
         Your verification application has been received. We'll review it and get back to you within 24–48 hours.
       </p>
-      <p className="text-sm text-gray-400 mb-8">Check your email at <span className="text-blue-600 font-medium">info@techinterverifysolutions.com</span> for updates.</p>
-      <button className="bg-blue-900 text-white text-sm font-semibold px-8 py-3 rounded-xl hover:bg-blue-800 transition-colors">
+      <p className="text-sm text-gray-400 mb-8">Check your email for updates.</p>
+      <button
+        onClick={() => {
+          navigate("/dashboard")}}
+        className="bg-blue-900 text-white text-sm font-semibold px-8 py-3 rounded-xl hover:bg-blue-800 transition-colors"
+      >
         Go to Dashboard
       </button>
     </div>
@@ -582,9 +550,83 @@ function SuccessScreen() {
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function VerificationFlow() {
+  const { user, token ,refreshUser } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState(INITIAL_DATA);
+  const [isUploading, setIsUploading] = useState(false);
+  const [formData, setFormData] = useState(null);
+
+useEffect(() => {
+    if (user) {
+      setFormData({
+        // Step 1
+        businessName: user.business_name || "",
+        industry: user.industry || "",
+        businessEmail: user.email || "", // email not updatable, but we keep for display
+        yearFounded: user.year_founded ? String(user.year_founded) : "",
+        businessPhone: user.business_phone_number || "",
+        businessAddress: user.business_address || "",
+        employeeCount: user.employee_count
+          ? (() => {
+              // Map number back to range string for display
+              const ranges = EMPLOYEE_RANGES;
+              if (user.employee_count <= 10) return ranges[0];
+              if (user.employee_count <= 50) return ranges[1];
+              if (user.employee_count <= 200) return ranges[2];
+              if (user.employee_count <= 500) return ranges[3];
+              if (user.employee_count <= 1000) return ranges[4];
+              return ranges[5];
+            })()
+          : "",
+        website: user.business_website || "",
+        businessDescription: user.business_description || "",
+        // Step 2
+        cacNumber: user.business_cac_number || "",
+        tin: user.business_tin || "",
+        registrationDate: user.business_registration_date
+          ? new Date(user.business_registration_date).toLocaleDateString("en-GB")
+          : "",
+        // Step 3 – directors
+        directors: user.business_directors && user.business_directors.length
+          ? user.business_directors.map(d => ({
+              fullName: d.fullName || d.name || "",
+              position: d.position || "",
+              email: d.email || "",
+              phone: d.phone || "",
+            }))
+          : [{ fullName: "", position: "", email: "", phone: "" }],
+        // Step 4 – documents (initially empty; we'll use mock names if needed)
+        documents: {
+          cac: { name: "", file: null, uploaded: false, url: "" },
+          taxClearance: { name: "", file: null, uploaded: false, url: "" },
+          proofAddress: { name: "", file: null, uploaded: false, url: "" },
+        },
+      });
+    } else {
+      // Fallback to mock data if user not loaded yet (shouldn't happen)
+      setFormData({
+        businessName: "",
+        industry: "",
+        businessEmail: "",
+        yearFounded: "",
+        businessPhone: "",
+        businessAddress: "",
+        employeeCount: "",
+        website: "",
+        businessDescription: "",
+        cacNumber: "",
+        tin: "",
+        registrationDate: "",
+        directors: [{ fullName: "", position: "", email: "", phone: "" }],
+        documents: {
+          cac: { name: "", file: null, uploaded: false, url: "" },
+          taxClearance: { name: "", file: null, uploaded: false, url: "" },
+          proofAddress: { name: "", file: null, uploaded: false, url: "" },
+        },
+      });
+    }
+  }, [user]);
 
   const updateField = (field, value) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -614,15 +656,116 @@ export default function VerificationFlow() {
       documents: { ...prev.documents, [docKey]: value },
     }));
 
+    const uploadFile = async (file, uploadTarget) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_target", uploadTarget);
+
+    try {
+      const response = await api.post("/misc/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data; // returns the URL string
+    } catch (err) {
+      console.error("Upload failed:", err);
+      throw new Error(`Failed to upload ${file.name}: ${err.message}`);
+    }
+  };
+
+// Handle final submission
+  const handleSubmit = async () => {
+    setIsUploading(true);
+    const loadingToast = toast.loading("Uploading documents...");
+
+    try {
+      // 1. Upload all documents that have a file
+      const docUrls = {};
+      for (const [key, doc] of Object.entries(formData.documents)) {
+        if (doc.file && !doc.url) {
+          const url = await uploadFile(doc.file, "business_verification");
+          docUrls[key] = url;
+          // Update local state with URL (optional)
+          updateDoc(key, { ...doc, url, uploaded: true });
+        } else if (doc.url) {
+          docUrls[key] = doc.url;
+        }
+      }
+
+      toast.loading("Submitting verification data...", { id: loadingToast });
+
+      // 2. Build the payload for PATCH /auth/me
+      const payload = {
+        business_name: formData.businessName,
+        industry: formData.industry,
+        year_founded: parseInt(formData.yearFounded) || 0,
+        employee_count: mapEmployeeCount(formData.employeeCount),
+        business_address: formData.businessAddress,
+        business_description: formData.businessDescription,
+        business_phone_number: formData.businessPhone,
+        business_website: formData.website,
+        business_tin: formData.tin,
+        business_cac_number: formData.cacNumber,
+        business_registration_date: formData.registrationDate,
+        business_directors: formData.directors.map(d => ({
+          fullName: d.fullName,
+          position: d.position,
+          email: d.email,
+          phone: d.phone,
+        })),
+        documents: docUrls, // e.g., { cac: "https://...", taxClearance: "...", proofAddress: "..." }
+      };
+
+      // Add any other fields that the API might expect (like first_name, last_name) – but those are already set
+      // We're not sending email because it's not updatable
+
+      const response = await api.patch("/auth/me", payload);
+
+      if (response.status === 202) {
+        toast.success("Verification application submitted successfully!", { id: loadingToast });
+        setSubmitted(true);
+        
+        await refreshUser(); 
+        
+      } else {
+        throw new Error("Unexpected response from server");
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      const message = err.response?.data?.detail || err.message || "Failed to submit. Please try again.";
+      toast.error(`Error: ${message}`, { id: loadingToast });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Navigation functions
   const next = () => setStep((s) => Math.min(s + 1, 5));
   const back = () => setStep((s) => Math.max(s - 1, 1));
 
+  // While user data is loading (or initializing), show a loading spinner
+  if (!formData) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin w-8 h-8 text-blue-600 mx-auto" />
+          <p className="mt-2 text-gray-500">Loading your information...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
-      <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Page heading — hidden on review step */}
+        <Link 
+      to="/dashboard" 
+      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+    >
+      <span>Exit to Dashboard</span>
+      <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+    </Link>
         {!submitted && (
           <div className="mb-5">
             {step === 5 ? (
@@ -683,7 +826,8 @@ export default function VerificationFlow() {
                 data={formData}
                 onGoToStep={setStep}
                 onBack={back}
-                onSubmit={() => setSubmitted(true)}
+                onSubmit={handleSubmit}
+                isUploading={isUploading}
               />
             )}
           </>

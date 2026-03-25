@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Shield, Eye, EyeOff, Loader2 } from "lucide-react"; 
+import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast';
-import api from '../../api/axios'; // Ensure the path to your axios instance is correct
-
+import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext'; 
 
 export default function SignupPage() {
+  const { login } = useAuth(); 
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,33 +26,60 @@ export default function SignupPage() {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
 
-  const signupData = {
-    first_name: form.firstName,
-    last_name: form.lastName,
-    business_name: form.businessName,
-    email: form.email,
-    password: form.password
-  };
-
-  toast.promise(
-    api.post("/auth/signup", signupData),
-    {
-      loading: 'Creating your account...',
-      success: () => {
-        navigate("/login");
-        return "Account created! You can now log in.";
-      },
-      error: (err) => {
-        // Specifically catch the 400 "Email already registered" error
-        const message = err.response?.data?.detail || "Signup failed. Please try again.";
-        return `Error: ${message}`;
-      },
+    // Validate passwords match
+    if (form.password !== form.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
     }
-  );
-};
+
+    setLoading(true);
+
+    const signupData = {
+      first_name: form.firstName,
+      last_name: form.lastName,
+      business_name: form.businessName,
+      email: form.email,
+      password: form.password,
+    };
+
+    try {
+      // 1. Create the account
+      await api.post("/auth/signup", signupData);
+
+      // 2. Automatically log the user in using the same credentials
+      const loginData = new URLSearchParams();
+      loginData.append("username", form.email);
+      loginData.append("password", form.password);
+
+      const loginResponse = await api.post("/auth/token", loginData, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+
+      // 3. Save token and update auth context
+      login(loginResponse.data.access_token);
+
+      // 4. Navigate to dashboard
+      navigate("/dashboard");
+      toast.success("Account created! Welcome aboard 🎉");
+    } catch (err) {
+      let message = "Signup failed. Please try again.";
+
+      if (err.response?.data) {
+        if (typeof err.response.data === "object" && err.response.data.detail) {
+          message = err.response.data.detail;
+          if (Array.isArray(message)) message = message[0]?.msg || message;
+        } else if (typeof err.response.data === "string") {
+          message = err.response.data;
+        }
+      }
+
+      toast.error(`Error: ${message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
@@ -60,7 +88,6 @@ export default function SignupPage() {
         <p className="text-gray-500 text-base mb-8">Start building trust in your business relationships</p>
 
         <div className="w-full max-w-xl bg-gray-50 rounded-2xl shadow-sm px-10 py-8">
-          
           <div className="flex items-center justify-center gap-0 mb-8 bg-gray-50 rounded-xl p-1">
             <Link to="/login" className="flex-1 py-2.5 text-center text-sm font-medium rounded-lg transition-colors hover:text-blue-900">
               Login
@@ -162,26 +189,10 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 pt-1">
-              <input
-                id="terms"
-                type="checkbox"
-                required
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-300 text-blue-600 accent-blue-700 cursor-pointer"
-              />
-              <label htmlFor="terms" className="text-sm text-gray-500 cursor-pointer">
-                I agree to the <a href="#" className="text-blue-600 hover:underline">Terms</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
-              </label>
-            </div>
-
             <button 
               type="submit"
-              disabled={loading || !agreed}
-              className={`w-full flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors mt-2 ${
-                (loading || !agreed) ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              // disabled={loading || !agreed}
+              className={`w-full flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-semibold py-3.5 rounded-xl text-sm transition-colors mt-2 `}
             >
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</> : "Sign Up"}
             </button>
