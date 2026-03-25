@@ -51,10 +51,28 @@ class UserModel(BaseModel):
     email: EmailStr
     last_name: str
     first_name: str
+    
     business_name: str
+    
     date_created: datetime
     date_updated: datetime
 
+
+class UserDetailModel(UserModel):
+    industry: str | None
+    year_founded: int | None
+    employee_count: int | None
+    business_website: str | None
+    business_address: str | None
+    business_description: str | None
+    business_phone_number: str | None
+    
+    business_tin: str | None
+    business_cac_number: str | None
+    documents: dict[str, str] | None
+    business_registration_date: datetime | None
+    business_directors: list[dict[str, str]] | None
+    
 
 class UpdateUserModel(BaseModel):
     business_name: Annotated[str | None, Field(max_length=255)] = None
@@ -62,7 +80,21 @@ class UpdateUserModel(BaseModel):
     new_password: Annotated[str | None, Field(min_length=8)] = None
     first_name: Annotated[str | None, Field(max_length=100)] = None
     last_name: Annotated[str | None, Field(max_length=100)] = None
-
+    
+    industry: str | None = None
+    year_founded: int | None = None
+    employee_count: int | None = None
+    business_website: str | None = None
+    business_address: str | None = None
+    business_description: str | None = None
+    business_phone_number: str | None = None
+    
+    business_tin: str | None = None
+    business_cac_number: str | None = None
+    documents: dict[str, str] | None = None
+    business_registration_date: datetime | None = None
+    business_directors: list[dict[str, str]] | None = None
+    
     @model_validator(mode="after")
     def check_password_dependency(self) -> "UpdateUserModel":
         if self.new_password and not self.old_password:
