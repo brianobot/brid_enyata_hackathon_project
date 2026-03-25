@@ -11,17 +11,28 @@ from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from app.api_router import api
 from app.logger import logger
-from app.middlewares import log_request_middleware
+from app.api_router import api
 from app.settings import Settings
+from app.utils import setup_s3_client
+from app.middlewares import log_request_middleware
 
 settings = Settings()  # type: ignore
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    yield
+    s3_gen = setup_s3_client()
+    s3_client = await s3_gen.__anext__()
+    app.state.s3_client = s3_client
+
+    try:
+        yield
+    finally:
+        try:
+            await s3_gen.__anext__()
+        except StopAsyncIteration:
+            pass
 
 
 def initiate_app():
