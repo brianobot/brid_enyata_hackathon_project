@@ -19,3 +19,4 @@ class User(AbstractBase):
     first_name: Mapped[str]
     business_name: Mapped[str]
     
+
