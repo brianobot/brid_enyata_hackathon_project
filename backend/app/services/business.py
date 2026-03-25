@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models import User as UserDB
+
 
 async def search_business(keyword: str, session: AsyncSession):
     return {
@@ -36,3 +38,23 @@ async def search_business(keyword: str, session: AsyncSession):
             },
         ]
     }
+    
+
+async def get_verification_score(user: UserDB):
+    return 70.23
+    
+
+async def verify_cac(user: UserDB):
+    pass
+
+
+async def verify_tin(user: UserDB):
+    pass
+
+
+async def verify_bvn(user: UserDB):
+    pass
+    
+    
+async def verify_directors(user: UserDB):
+    pass
