@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
-import { Lock, Bell, CreditCard, Save, ArrowLeft, LogIn, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Lock, Bell, CreditCard, X, Save, ArrowLeft, LogIn, ShieldCheck } from 'lucide-react';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -92,6 +93,13 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <Link 
+      to="/dashboard" 
+      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+    >
+      <span>Exit to Dashboard</span>
+      <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+    </Link>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">

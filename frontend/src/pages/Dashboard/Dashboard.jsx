@@ -114,7 +114,7 @@ const MOCK_NOTIFICATIONS = [
 const NAV_ITEMS = [
   { label: "Dashboard",    icon: LayoutDashboard, to: "/dashboard" },
   { label: "Verification", icon: ShieldCheck,     to: "/verify"    },
-  { label: "Documents",    icon: FileText,        to: "/documents" },
+  // { label: "Documents",    icon: FileText,        to: "/documents" },
   { label: "Profile",      icon: User,            to: "/settings/profile"   },
   { label: "Settings",     icon: Settings,        to: "/settings"  },
 ];
@@ -476,17 +476,7 @@ export default function Dashboard() {
         </nav>
 
         {/* Enterprise upgrade card */}
-        {!sidebarCollapsed && (
-          <div className="mx-3 mb-4 bg-gray-900 rounded-2xl p-4 text-white">
-            <p className="text-[10px] font-bold tracking-widest text-blue-400 mb-1">ENTERPRISE</p>
-            <p className="text-xs text-gray-300 leading-snug mb-3">
-              Unlock advanced background checks.
-            </p>
-            <button className="w-full bg-white text-gray-900 text-xs font-semibold py-2 rounded-xl hover:bg-gray-100 transition-colors">
-              Upgrade to Business
-            </button>
-          </div>
-        )}
+
 
         {/* Collapse toggle */}
         <button
@@ -510,14 +500,6 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* DEV toggle — remove when wiring real API */}
-            {/* <button
-              onClick={() => setIsVerified(!isVerified)}
-              title="Dev toggle — remove when API is ready"
-              className="text-[10px] font-bold px-3 py-1.5 rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-blue-300 hover:text-blue-500 transition-colors"
-            >
-              {isVerified ? "Pre-verify view" : "Post-verify view"}
-            </button> */}
 
             {/* Bell */}
             <button

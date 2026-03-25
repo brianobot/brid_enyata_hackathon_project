@@ -168,7 +168,20 @@ function Step1({ data, onChange, onNext }) {
             <TextInput value={data.businessEmail} onChange={s("businessEmail")} placeholder="contact@business.com" type="email" />
           </Field>
           <Field label="Year Founded" required>
-            <TextInput value={data.yearFounded} onChange={s("yearFounded")} placeholder="YYYY" />
+            <input
+    type="number"
+    placeholder="e.g. 2024"
+    min="1900"
+    max={new Date().getFullYear()}
+    value={data.registrationYear}
+    onChange={(e) => {
+      // Only allow up to 4 digits
+      if (e.target.value.length <= 4) {
+        onChange('registrationYear')(e);
+      }
+    }}
+    className="w-full p-3.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-900/10 transition-all"
+  />
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-5 items-start">
@@ -225,7 +238,20 @@ function Step2({ data, onChange, onBack, onNext }) {
           <TextInput value={data.tin} onChange={s("tin")} placeholder="123456789-0001" />
         </Field>
         <Field label="Registration Date" required>
-          <TextInput value={data.registrationDate} onChange={s("registrationDate")} placeholder="DD/MM/YYYY" />
+          <input
+            type="number"
+            placeholder="e.g. 2024"
+            min="1900"
+            max={new Date().getFullYear()}
+            value={data.registrationYear}
+            onChange={(e) => {
+              // Only allow up to 4 digits
+              if (e.target.value.length <= 4) {
+                onChange('registrationYear')(e);
+              }
+            }}
+            className="w-full p-3.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-900/10 transition-all"
+          />
         </Field>
 
         {/* Info box */}
@@ -667,9 +693,19 @@ useEffect(() => {
       });
       return response.data; // returns the URL string
     } catch (err) {
-      console.error("Upload failed:", err);
+      console.error("Upload failed:" , err.response?.data || err.message);
       throw new Error(`Failed to upload ${file.name}: ${err.message}`);
     }
+  };
+
+  const formatDateForAPI = (dateStr) => {
+    if (!dateStr) return null;
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return dateStr;
   };
 
 // Handle final submission
@@ -678,17 +714,25 @@ useEffect(() => {
     const loadingToast = toast.loading("Uploading documents...");
 
     try {
-      // 1. Upload all documents that have a file
+      // 1. Upload all documents and collect plain URL strings
+      //    Your friend's API expects:  { cac: "https://...", taxClearance: "https://...", proofAddress: "https://..." }
+      //    NOT:                        { cac: { url: "https://..." }, ... }
       const docUrls = {};
+
       for (const [key, doc] of Object.entries(formData.documents)) {
-        if (doc.file && !doc.url) {
-          const url = await uploadFile(doc.file, "business_verification");
-          docUrls[key] = url;
-          // Update local state with URL (optional)
-          updateDoc(key, { ...doc, url, uploaded: true });
-        } else if (doc.url) {
-          docUrls[key] = doc.url;
+        if (doc.file) {
+          // Case A: user picked a new file — upload it and get back a URL string
+          const url = await uploadFile(doc.file, "TESTS");
+          docUrls[key] = url;                                          // plain string ✅
+          updateDoc(key, { name: doc.name, file: null, uploaded: true, url });
+        } else if (doc.url && typeof doc.url === "string") {
+          // Case B: file was already uploaded in a previous step — reuse the URL string
+          docUrls[key] = doc.url;                                      // plain string ✅
+        } else if (doc.url && typeof doc.url === "object" && doc.url.url) {
+          // Case C: safety net — if somehow an old { url: "..." } object crept in, unwrap it
+          docUrls[key] = doc.url.url;                                  // unwrap to plain string ✅
         }
+        // If none of the above match, the doc was never uploaded — skip it
       }
 
       toast.loading("Submitting verification data...", { id: loadingToast });
@@ -705,8 +749,10 @@ useEffect(() => {
         business_website: formData.website,
         business_tin: formData.tin,
         business_cac_number: formData.cacNumber,
-        business_registration_date: formData.registrationDate,
-        business_directors: formData.directors.map(d => ({
+        business_registration_date: formatDateForAPI(formData.registrationDate),
+        business_directors: formData.directors
+        .filter(d => d.fullName && d.position && d.email && d.phone)
+        .map(d => ({
           fullName: d.fullName,
           position: d.position,
           email: d.email,
@@ -718,20 +764,25 @@ useEffect(() => {
       // Add any other fields that the API might expect (like first_name, last_name) – but those are already set
       // We're not sending email because it's not updatable
 
+      console.log("Payload:", JSON.stringify(payload, null, 2));
+
       const response = await api.patch("/auth/me", payload);
 
       if (response.status === 202) {
         toast.success("Verification application submitted successfully!", { id: loadingToast });
+        
         setSubmitted(true);
-        
-        await refreshUser(); 
-        
+        await refreshUser();   
       } else {
         throw new Error("Unexpected response from server");
       }
     } catch (err) {
       console.error("Submission error:", err);
-      const message = err.response?.data?.detail || err.message || "Failed to submit. Please try again.";
+      if (err.response) {
+        console.error("Response data:", err.response.data);
+        console.error("Status:", err.response.status);
+      }
+      const message = err.response?.data?.detail || err.message || "Failed to submit.";
       toast.error(`Error: ${message}`, { id: loadingToast });
     } finally {
       setIsUploading(false);
@@ -760,12 +811,12 @@ useEffect(() => {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Page heading — hidden on review step */}
         <Link 
-      to="/dashboard" 
-      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
-    >
-      <span>Exit to Dashboard</span>
-      <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-    </Link>
+          to="/dashboard" 
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+        >
+          <span>Exit to Dashboard</span>
+          <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+        </Link>
         {!submitted && (
           <div className="mb-5">
             {step === 5 ? (
