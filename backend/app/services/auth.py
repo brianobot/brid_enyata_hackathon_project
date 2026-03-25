@@ -334,5 +334,5 @@ async def refresh_token(
 
 async def logout(token: str):
     # Implement logic to blacklist token
-    redis_manager.cache_json_item(token, {"timestamp": str(datetime.now())})
+    # redis_manager.cache_json_item(token, {"timestamp": str(datetime.now())})
     return {"detail": "User Logged Out Successfully"}

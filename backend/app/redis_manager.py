@@ -10,18 +10,20 @@ settings = Settings()  # type: ignore
 
 class RedisManager:
     def __init__(self):
-        self.redis_client = redis.Redis(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
-            decode_responses=True,
-        )
+        # self.redis_client = redis.Redis(
+        #     host=settings.REDIS_HOST,
+        #     port=settings.REDIS_PORT,
+        #     decode_responses=True,
+        # )
+        pass
 
     def cache_json_item(self, key: str, value: dict[str, Any], ttl: int = 3600) -> None:
         value_as_string = json.dumps(value)
-        self.redis_client.set(name=key, value=value_as_string, ex=ttl)
+        # self.redis_client.set(name=key, value=value_as_string, ex=ttl)
 
     def get_json_item(self, key: str, default: Any | None = None):
-        value = self.redis_client.get(name=key)
+        # value = self.redis_client.get(name=key)
+        value = None
 
         if value is None:
             return default
@@ -30,7 +32,8 @@ class RedisManager:
         return value_decoded
 
     def delete_key(self, key: str) -> None:
-        self.redis_client.delete(key)
+        # self.redis_client.delete(key)
+        pass
 
 
 redis_manager = RedisManager()
