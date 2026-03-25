@@ -11,6 +11,12 @@ class Settings(BaseSettings):
 
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
+    
+    AWS_REGION: str
+    AWS_SECRET_KEY: str
+    AWS_ACCESS_KEY: str
+    AWS_BUCKET_NAME: str
+    CLOUD_FRONT_URL: str
 
     MAIL_USERNAME: str  # required environment variable
     MAIL_PASSWORD: str  # required environment variable

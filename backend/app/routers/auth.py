@@ -85,7 +85,7 @@ async def get_refresh_token(
     return await auth_services.refresh_token(token_data, db)
 
 
-@router.get("/me", response_model=auth_schemas.UserModel)
+@router.get("/me", response_model=auth_schemas.UserDetailModel)
 async def get_user_detail(user: CurrentUserDep):
     return user
 
