@@ -33,7 +33,7 @@ class SearchBusinessModel(BaseModel):
     business_address: str | None = None
     
 
-@router.get("/search", response_model=list[SearchBusinessModel])
+@router.get("/search", response_model=dict[str, int | list[SearchBusinessModel]])
 async def search_businesses(keyword: str, db: DBDep):
     return await business_services.search_business(keyword, db)
     
