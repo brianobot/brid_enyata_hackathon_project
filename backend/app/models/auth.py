@@ -51,5 +51,11 @@ class User(AbstractBase):
     
     @hybrid_property
     def score(self) -> float:
-        return 70
+        total = sum([
+            self.bvn_is_verified,
+            self.cac_is_verified,
+            self.tin_is_verified,
+            self.address_is_verified
+        ])
+        return ((total / 4) * 100) + 20
 
