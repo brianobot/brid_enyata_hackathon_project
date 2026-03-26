@@ -54,6 +54,11 @@ class UserModel(BaseModel):
     
     business_name: str
     
+    bvn_is_verified: bool
+    cac_is_verified: bool
+    tin_is_verified: bool
+    address_is_verified: bool
+    
     date_created: datetime
     date_updated: datetime
 
