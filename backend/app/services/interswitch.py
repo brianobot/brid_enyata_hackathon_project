@@ -84,7 +84,9 @@ async def verify_bvn(client: AsyncClient, bvn: str):
 
 async def verify_business(user: UserDB):
     # run all the checks needed to verify a business here
-    pass
+    async with AsyncClient(timeout=20) as client:
+        # 
+        
     
     
 async def main():
