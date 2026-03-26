@@ -76,6 +76,11 @@ async def verify_cac(client: AsyncClient, company_name: str):
     return await make_auth_request(client, url, "get")
 
 
+async def verify_bvn(client: AsyncClient, bvn: str):
+    url = f"https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/verify/identity/cac-lookup?companyName={company_name}"
+    return await make_auth_request(client, url, "get")
+    
+    
 async def main():
     async with AsyncClient(timeout=20) as client:
         # access_token = await get_access_token(client)
