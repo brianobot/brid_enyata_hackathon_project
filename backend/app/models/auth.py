@@ -44,10 +44,10 @@ class User(AbstractBase):
         default=None
     )
     
-    bvn_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
-    cac_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
-    tin_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
-    address_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    # bvn_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    # cac_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    # tin_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    # address_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
     
     @hybrid_property
     def score(self) -> float:
