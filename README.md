@@ -40,4 +40,4 @@ Developed with ❤️ by The Real Awesome People:
 
 - [Brian Obot](https://github.com/brianobot) - Backend Developer (Backend Lead)
 - [Idongesit Inyang](https://github.com/id-inyang) - Frontend Developer (Frontend Lead)
-- [Angel Emele]() - Product Manager / UI Designer
+- [Angel Emele](https://github.com/Angelle-ace) - Product Manager / UI Designer (Design Lead)
