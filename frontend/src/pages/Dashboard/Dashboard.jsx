@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.js";
 import SideBar from "../../components/SideBar"
+import api from "../../api/axios";
 
 // ── MOCK DATA ─────────────────────────────────────────────────────────────────
 const MOCK_USER = {
@@ -244,15 +245,41 @@ function PreVerificationView({ user }) {
   );
 }
 
-// ── POST-VERIFICATION VIEW (mock, as before but with safe user fields) ──
+// ── POST-VERIFICATION VIEW ──
 function PostVerificationView({ user }) {
-  const displayName = user?.first_name 
-    ? `${user.first_name} ${user.last_name || ''}`.trim() 
+  const displayName = user?.first_name
+    ? `${user.first_name} ${user.last_name || ""}`.trim()
     : MOCK_USER.name;
-  // Mock values – replace with real API data when available
+
+  // ── TRUST SCORE — real API ─────────────────────────────────────────────────
+  // GET /v1/businesses/verification/score
+  // Returns a plain string (the score), e.g. "72"
+  const [trustScore, setTrustScore]       = useState(null);  // null = not loaded yet
+  const [scoreLoading, setScoreLoading]   = useState(true);
+  const [scoreError, setScoreError]       = useState(false);
+
+  useEffect(() => {
+    const fetchTrustScore = async () => {
+      try {
+        setScoreLoading(true);
+        setScoreError(false);
+        const response = await api.get("/businesses/verification/score");
+        // The API returns a plain string — parse it to a number for display
+        const score = parseFloat(response.data);
+        setTrustScore(isNaN(score) ? null : score);
+      } catch (err) {
+        console.error("[Dashboard] Failed to fetch trust score:", err);
+        setScoreError(true);
+      } finally {
+        setScoreLoading(false);
+      }
+    };
+
+    fetchTrustScore();
+  }, []); // runs once when PostVerificationView mounts
+
+  // ── These remain mock until their own API endpoints are ready ─────────────
   const mockStats = {
-    trustScore: 78,
-    trustScoreDelta: "+12",
     recommendations: 8,
     recommendationsPending: 2,
     profileViews: 1247,
@@ -285,21 +312,62 @@ function PostVerificationView({ user }) {
         </span>
       </div>
 
-      {/* Stats — live */}
+      {/* Stats row */}
       <div className="grid grid-cols-3 gap-4">
+
+        {/* ── TRUST SCORE — wired to real API ── */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-gray-500">Trust Score</p>
-            <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
-              <TrendingUp className="w-3 h-3" /> {mockStats.trustScoreDelta}
-            </span>
+            {/* Only show the trending badge once we have a real score */}
+            {trustScore !== null && !scoreError && (
+              <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
+                <TrendingUp className="w-3 h-3" />
+              </span>
+            )}
           </div>
-          <p className="text-4xl font-black text-gray-900 mt-1">{mockStats.trustScore}</p>
-          <p className="text-xs text-gray-400 mt-3 leading-snug">
-            HINT : Complete pending verifications to increase your score
-          </p>
+
+          {/* Three possible states: loading, error, or real score */}
+          {scoreLoading ? (
+            // Loading state — animated skeleton pulse
+            <div className="animate-pulse mt-1">
+              <div className="h-10 bg-gray-200 rounded-lg w-16 mb-3" />
+              <div className="h-3 bg-gray-100 rounded w-3/4" />
+            </div>
+          ) : scoreError ? (
+            // Error state — show a friendly message with a retry button
+            <div className="mt-1">
+              <p className="text-2xl font-black text-gray-300">—</p>
+              <p className="text-xs text-red-400 mt-2">Could not load score.</p>
+              <button
+                onClick={() => {
+                  setScoreLoading(true);
+                  setScoreError(false);
+                  api.get("/businesses/verification/score")
+                    .then((r) => {
+                      const s = parseFloat(r.data);
+                      setTrustScore(isNaN(s) ? null : s);
+                    })
+                    .catch(() => setScoreError(true))
+                    .finally(() => setScoreLoading(false));
+                }}
+                className="text-xs text-blue-600 hover:underline mt-1"
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            // Success state — real score from API
+            <>
+              <p className="text-4xl font-black text-gray-900 mt-1">{trustScore}</p>
+              <p className="text-xs text-gray-400 mt-3 leading-snug">
+                HINT: Complete pending verifications to increase your score
+              </p>
+            </>
+          )}
         </div>
 
+        {/* Recommendations — still mock */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-gray-500">Recommendations</p>
@@ -311,6 +379,7 @@ function PostVerificationView({ user }) {
           <p className="text-xs text-gray-400 mt-3">{mockStats.recommendationsPending} Pending</p>
         </div>
 
+        {/* Profile Views — still mock */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-gray-500">profile Views</p>
@@ -435,6 +504,7 @@ export default function Dashboard() {
       {/* ── SIDEBAR ── */}
       <SideBar/>
 
+      
       {/* ── MAIN AREA ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
 
@@ -449,8 +519,10 @@ export default function Dashboard() {
 
             {/* Bell */}
             <button
+              disabled
+              title="Notifications coming soon"
               onClick={() => setNotifOpen(true)}
-              className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
+              className="p-2 text-slate-300 cursor-not-allowed opacity-50 transition-all hover:bg-transparent relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Bell className="w-4 h-4 text-gray-500" />
               {unreadCount > 0 && (

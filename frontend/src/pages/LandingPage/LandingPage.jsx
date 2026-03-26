@@ -73,19 +73,21 @@ const LandingPage = () => {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="pt-36 pb-16 px-6 mb-1 bg-gradient-to-b from-slate-50 to-white text-center hero-container"
+      <section
+        id="home"
+       className="pt-36 pb-16 px-6 mb-1 bg-gradient-to-b from-slate-50 to-white text-center "
       >
         <div className="max-w-2xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4 
           
             font-bold bg-gradient-to-b from-white via-slate-300 to-slate-500 bg-clip-text tracking-tight
           ">
-            <span className="text-[#61a979]">Verify</span> Business <span className="text-[#154470]">Credibility</span>
+            <span className="text-[#209547]">Verify</span> Business <span className="text-[#154470]">Credibility</span>
             <br />
             Before You Engage
           </h1>
           <p className="text-gray-500 text-base my-8 max-w-lg mx-auto leading-relaxed">
-            InterVerify helps you make informed decisions by provided trusted <br /> business <span className="#61a979">verification</span> data and credibility profiles across Nigeria.
+            InterVerify helps you make informed decisions by providing trusted <br /> business <span className="#61a979">verification</span> data and credibility profiles across Nigeria.
           </p>
 
           <SearchBar
@@ -119,7 +121,9 @@ const LandingPage = () => {
       </section>
 
       {/* ── FEATURES ── */}
-      <section className="py-32 px-6 bg-[#f7f7f7]">
+      <section
+        id="features"
+       className="py-32 px-6 bg-[#f7f7f7]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs text-blue-600 font-semibold uppercase tracking-widest mb-2">
@@ -128,7 +132,7 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">
               Powerful Tools for
               <br />
-              Business<span className="text-[#61a979]"> Verification</span>
+              Business<span className="text-[#209547]"> Verification</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -155,20 +159,22 @@ const LandingPage = () => {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-20 px-6  bg-slate-50">
+      <section
+        id="how-it-works"
+       className="py-20 px-6  bg-slate-50">
         <div className="max-w-5xl mx-auto flex flex-col gap-12 items-start">
           <div className="text-center mx-auto flex-shrink-0">
             <p className="text-xs text-[#134470] font-semibold uppercase tracking-widest mb-3">
               How it works
             </p>
             <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
-              <span className="text-[#61a979]">Verify</span> Businesses with Confidence
+              <span className="text-[#209547]">Verify</span> Businesses with Confidence
             </h2>
             <p className="text-sm text-gray-500 leading-relaxed mb-6">
               InterVerify helps you search, review, and verify businesses using trusted compliance data and credibility insights.
             </p>
           </div>
-          <div className="flex-1 flex gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {STEPS.map((s) => (
               <div key={s.num} className="flex gap-4 items-start">
                 <div className="w-9 h-9 rounded-full text-blue-600 border border-gray-300 bg-white flex items-center justify-center text-sm font-bold flex-shrink-0">
@@ -185,12 +191,14 @@ const LandingPage = () => {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-20 px-6 bg-white">
+      <section
+        id="faq"
+       className="py-20 px-6 bg-white">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">FAQ</h2>
             <p className="text-sm text-gray-400">
-              Everything you need to know about verifying businesses <br /> on <span className="text-[#154470]">Inter</span><span className="text-[#61a979]">Verify</span>
+              Everything you need to know about verifying businesses <br /> on <span className="text-[#154470]">Inter</span><span className="text-[#209547]">Verify</span>
             </p>
           </div>
           <div>
@@ -212,7 +220,7 @@ const LandingPage = () => {
           <p className="text-slate-400 text-sm mb-8">
             Join thousands of compliance teams who trust InterVerify.
           </p>
-          <div className="flex items-center bg-slate-800 border border-slate-700 rounded-xl overflow-hidden max-w-md mx-auto">
+          <div className="flex items-center bg-slate-800 border border-slate-700 rounded-full overflow-hidden max-w-md mx-auto">
             <input
               type="email"
               value={footerEmail}
@@ -220,7 +228,7 @@ const LandingPage = () => {
               placeholder="Enter your work email..."
               className="flex-1 px-4 py-3 text-sm bg-transparent text-white placeholder-slate-500 outline-none"
             />
-            <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-3 transition-colors whitespace-nowrap flex items-center gap-1.5">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-3 transition-colors whitespace-nowrap m-1 rounded-full flex items-center gap-1.5">
               Get Started
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
@@ -229,12 +237,6 @@ const LandingPage = () => {
       </section>
 
       <Footer />
-
-      {/* Modal lives here so it sits above everything else */}
-      <BusinessProfileModal
-        business={search.selectedBusiness}
-        onClose={search.handleCloseModal}
-      />
     </div>
   );
 };

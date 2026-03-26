@@ -14,7 +14,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Global business verification for modern compliance teams.
+              Building trust in business relationships through verified credibility.
             </p>
           </div>
 

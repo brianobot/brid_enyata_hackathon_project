@@ -161,18 +161,11 @@ export default function Settings() {
               )}
 
               <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
-                </button>
+
                 <button
                   type="submit"
                   disabled={isUpdatingPassword}
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2 bg-[#154470] hover:bg-blue-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
                 >
                   {isUpdatingPassword ? 'Updating...' : 'Update Password'}
                 </button>
@@ -255,30 +248,18 @@ export default function Settings() {
 
             <div className="mt-6">
               <button
+                disabled
+                title="FEATURE COMING SOON"
                 onClick={saveNotificationPreferences}
-                disabled={isSavingNotifs}
-                className="flex items-center gap-2 px-6 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
+                // disabled={isSavingNotifs}
+                className="flex items-center gap-2 px-6 py-2 bg-gray-800 cursor-not-allowed opacity-50 transition-all text-white rounded-xl font-medium transition-colors disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 {isSavingNotifs ? 'Saving...' : 'Save Preferences'}
               </button>
             </div>
           </div>
-
-
-          {/* Additional action buttons (Login, Get Verified) */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            
-            <button
-              onClick={() => navigate('/settings/profile')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors"
-            >
-              <User className="w-4 h-4" />
-              Profile
-            </button>
-          </div>
-        </div>
-      
+        </div>      
     </div>
     </div>
   );

@@ -34,20 +34,22 @@ const SideBar = () => {
     return (
         <div>
             <aside
-            className={`relative flex flex-col bg-white border-r border-gray-100 transition-all duration-300 ease-in-out flex-shrink-0
+            className={`relative flex flex-col bg-white border-r h-[100%] border-gray-100 transition-all duration-300 ease-in-out flex-shrink-0
             ${sidebarCollapsed ? "w-16" : "w-44"}`}
         >
             {/* Logo */}
             <div className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-100 ${sidebarCollapsed ? "justify-center px-0" : ""}`}>
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <ShieldCheck className="w-4 h-4 text-white" />
-            </div>
-            {!sidebarCollapsed && (
-                <div>
-                <p className="text-sm font-bold text-gray-900 leading-none">InterVerify</p>
-                <p className="text-[9px] text-gray-400 tracking-widest font-medium mt-0.5">TRUST REIMAGINED</p>
-                </div>
-            )}
+            <Link to='/'>
+                {!sidebarCollapsed ? (
+                    <div>
+                        <img src={assets.logo}/>
+                    </div>) :
+                
+                (<div>
+                    <img src={assets.logoIcon} className="w-[150px]"/>
+                </div>)  
+                }
+             </Link>
             </div>
 
             {/* Nav items */}
