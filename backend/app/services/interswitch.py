@@ -80,12 +80,34 @@ async def verify_cac(client: AsyncClient, company_name: str):
 async def verify_bvn(client: AsyncClient, bvn: str):
     url = f"https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/verify/identity/cac-lookup?companyName={company_name}"
     return await make_auth_request(client, url, "get")
-    
+
+
+async def verify_physical_address(client: AsyncClient, address: str):
+    url = "https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/addresses"
+    payload = {
+        "street": address,
+        "stateName": "Lagos",
+        "lgaName": "mushin",
+        "landmark": "mushin",
+        "city": "mushin",
+        "applicant": {
+            "firstname": "Kolade",
+            "lastname": "Alade",
+            "middlename": "toyosi",
+            "gender": "FEMALE",
+            "dob": "2022-09-14",
+            "phone": "+2349012345678"
+        }
+    }
+    response = await make_auth_request(client, url, "post", payload)
+    reference = response.json().get("data", {}).get("customerReference")
+    return await make_auth_request(client, f"{url}?reference={reference}", "get")
+
 
 async def verify_business(user: UserDB):
     # run all the checks needed to verify a business here
     async with AsyncClient(timeout=20) as client:
-        # 
+        pass
         
     
     
