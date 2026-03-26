@@ -27,11 +27,11 @@ async def search_business(keyword: str, session: AsyncSession):
                 "address": "No 2345 Alien Highway",
             },
             {
-                "name": "Sample Business Name",
                 "year_fouded": 2010,
+                "business_name": "Sample Business Name",
                 "email": "business@jot.com",
-                "phone_number": "07018977031",
-                "address": "No 2345 Alien Highway",
+                "business_phone_number": "07018977031",
+                "business_address": "No 2345 Alien Highway",
             },
             {
                 "name": "Sample Business Name",
