@@ -4,6 +4,7 @@ from typing import Any
 from httpx import AsyncClient
 
 from app.settings import Settings
+from app.models import User as UserDB
 from app.redis_manager import redis_manager
 
 settings = Settings() # type: ignore
@@ -79,6 +80,11 @@ async def verify_cac(client: AsyncClient, company_name: str):
 async def verify_bvn(client: AsyncClient, bvn: str):
     url = f"https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/verify/identity/cac-lookup?companyName={company_name}"
     return await make_auth_request(client, url, "get")
+    
+
+async def verify_business(user: UserDB):
+    # run all the checks needed to verify a business here
+    pass
     
     
 async def main():
