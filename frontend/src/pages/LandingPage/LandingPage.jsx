@@ -25,7 +25,7 @@ import FAQItem   from '../../components/landing/FAQItem';
 import SearchBar             from '../../components/search/SearchBar';
 import SearchResultsPage     from '../../components/search/SearchResultsPage';
 import BusinessProfileModal  from '../../components/search/BusinessProfileModal';
-
+import StatsSection from "../../components/StatsSection"
 import { useBusinessSearch } from '../../hooks/useBusinessSearch';
 import {
   STATS, FEATURES, STEPS,
@@ -73,16 +73,19 @@ const LandingPage = () => {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="pt-28 pb-16 px-6 bg-gradient-to-b from-slate-50 to-white text-center">
+      <section className="pt-36 pb-16 px-6 mb-1 bg-gradient-to-b from-slate-50 to-white text-center hero-container"
+      >
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">
-            Verify Business Credibility
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4 
+          
+            font-bold bg-gradient-to-b from-white via-slate-300 to-slate-500 bg-clip-text tracking-tight
+          ">
+            Verify Business <span className="text-[#376491]">Credibility</span>
             <br />
-            Before You Engage
+            Before You <span className="text-[#376491]">Engage</span>
           </h1>
-          <p className="text-gray-500 text-base mb-8 max-w-lg mx-auto leading-relaxed">
-            Instantly check company registration, ownership, financial health,
-            and compliance status across 230+ countries.
+          <p className="text-gray-500 text-base my-8 max-w-lg mx-auto leading-relaxed">
+            InterVerify helps you make informed decisions by provided trusted <br /> business verification data and credibility profiles across Nigeria.
           </p>
 
           <SearchBar
@@ -101,29 +104,22 @@ const LandingPage = () => {
           />
 
           {/* Trust row */}
-          <div className="flex items-center justify-center gap-1 mb-10">
+          <div className="flex items-center justify-center gap-1 mb-10 ">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
             ))}
             <span className="text-xs text-gray-500 ml-2">
-              Trusted by 12,000+ compliance professionals
+              Trusted by 2+ businesses
             </span>
           </div>
 
           {/* Stats */}
-          <div className="flex justify-center gap-12 flex-wrap">
-            {STATS.map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{s.label}</div>
-              </div>
-            ))}
-          </div>
+          <StatsSection />
         </div>
       </section>
 
       {/* ── FEATURES ── */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-32 px-6 bg-[#f7f7f7]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs text-blue-600 font-semibold uppercase tracking-widest mb-2">
@@ -132,7 +128,7 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">
               Powerful Tools for
               <br />
-              Business Verification
+              <span className="text-[#376491]">Business Verification</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -159,27 +155,23 @@ const LandingPage = () => {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-20 px-6 bg-slate-50">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 items-start">
-          <div className="md:w-1/3 flex-shrink-0">
-            <p className="text-xs text-blue-600 font-semibold uppercase tracking-widest mb-3">
+      <section className="py-20 px-6  bg-slate-50">
+        <div className="max-w-5xl mx-auto flex flex-col gap-12 items-start">
+          <div className="text-center mx-auto flex-shrink-0">
+            <p className="text-xs text-[#376491] font-semibold uppercase tracking-widest mb-3">
               How it works
             </p>
             <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
-              Verify Businesses with Confidence
+              <span className="text-[#376491]">Verify</span> Businesses with Confidence
             </h2>
             <p className="text-sm text-gray-500 leading-relaxed mb-6">
-              Our streamlined process gives you verified business intelligence
-              in three simple steps — no expertise required.
+              InterVerify helps you search, review, and verify businesses using trusted compliance data and credibility insights.
             </p>
-            <button className="text-sm bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm">
-              Learn more
-            </button>
           </div>
-          <div className="flex-1 flex flex-col gap-6">
+          <div className="flex-1 flex gap-6">
             {STEPS.map((s) => (
               <div key={s.num} className="flex gap-4 items-start">
-                <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                <div className="w-9 h-9 rounded-full text-blue-600 border border-gray-300 bg-white flex items-center justify-center text-sm font-bold flex-shrink-0">
                   {s.num}
                 </div>
                 <div>
@@ -192,78 +184,13 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── PRICING ── */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-xs text-blue-600 font-semibold uppercase tracking-widest mb-2">
-              Pricing
-            </p>
-            <h2 className="text-3xl font-bold text-gray-900">
-              Simple pricing for
-              <br />
-              Business Verification
-            </h2>
-            <p className="text-sm text-gray-400 mt-3">Start free, scale as you grow.</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 items-start">
-            {/* Free tier */}
-            <div className="border border-gray-200 rounded-2xl p-7">
-              <div className="mb-1 text-xs font-semibold text-gray-400 uppercase tracking-widest">Starter Plan</div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">Free</div>
-              <p className="text-sm text-gray-400 mb-6">Perfect for occasional checks</p>
-              <ul className="space-y-2.5 mb-6">
-                {FREE_FEATURES.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-gray-700">
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0" />{f}
-                  </li>
-                ))}
-                {FREE_MISSING.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-gray-400">
-                    <X className="w-4 h-4 text-gray-300 flex-shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-              <button className="w-full border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
-                Get started free
-              </button>
-            </div>
-
-            {/* Pro tier */}
-            <div className="bg-blue-600 rounded-2xl p-7 text-white relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                Most Popular
-              </div>
-              <div className="mb-1 text-xs font-semibold text-blue-200 uppercase tracking-widest">Pro Business</div>
-              <div className="flex items-end gap-1 mb-1">
-                <span className="text-3xl font-bold">$50</span>
-                <span className="text-blue-200 text-sm mb-1">.000</span>
-                <span className="text-blue-200 text-sm mb-1">/month</span>
-              </div>
-              <p className="text-sm text-blue-200 mb-6">For teams that need complete verification</p>
-              <ul className="space-y-2.5 mb-6">
-                {PRO_FEATURES.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-white">
-                    <Check className="w-4 h-4 text-blue-200 flex-shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-              <button className="w-full bg-white text-blue-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-50 transition-colors">
-                Start Pro Trial
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── FAQ ── */}
       <section className="py-20 px-6 bg-white">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">FAQ</h2>
             <p className="text-sm text-gray-400">
-              Everything you need to know about VerifyBiz and how it works.
+              Everything you need to know about verifying businesses <br /> on <span className="text-blue-900">Inter</span><span className="text-green-700">Verify</span>
             </p>
           </div>
           <div>

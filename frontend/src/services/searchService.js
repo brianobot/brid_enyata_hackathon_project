@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import api from '../api/axios';
-import { MOCK_BUSINESSES } from '../constants/landingData';
+// import { MOCK_BUSINESSES } from '../constants/landingData';
 
 // ── MAPPER ────────────────────────────────────────────────────────────────────
 // Translates Brian's API response shape → the shape our UI components expect.

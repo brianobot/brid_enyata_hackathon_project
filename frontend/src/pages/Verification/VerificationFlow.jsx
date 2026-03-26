@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../api/axios";
+import SideBar from '../../components/SideBar'
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
 const INDUSTRIES = [
@@ -714,14 +715,11 @@ useEffect(() => {
     const loadingToast = toast.loading("Uploading documents...");
 
     try {
-      // 1. Upload all documents and collect plain URL strings
-      //    Your friend's API expects:  { cac: "https://...", taxClearance: "https://...", proofAddress: "https://..." }
-      //    NOT:                        { cac: { url: "https://..." }, ... }
       const docUrls = {};
 
       for (const [key, doc] of Object.entries(formData.documents)) {
         if (doc.file) {
-          // Case A: user picked a new file — upload it and get back a URL string
+          
           const url = await uploadFile(doc.file, "TESTS");
           docUrls[key] = url;                                          // plain string ✅
           updateDoc(key, { name: doc.name, file: null, uploaded: true, url });
@@ -758,13 +756,8 @@ useEffect(() => {
           email: d.email,
           phone: d.phone,
         })),
-        documents: docUrls, // e.g., { cac: "https://...", taxClearance: "...", proofAddress: "..." }
+        documents: docUrls, 
       };
-
-      // Add any other fields that the API might expect (like first_name, last_name) – but those are already set
-      // We're not sending email because it's not updatable
-
-      console.log("Payload:", JSON.stringify(payload, null, 2));
 
       const response = await api.patch("/auth/me", payload);
 
@@ -779,7 +772,7 @@ useEffect(() => {
     } catch (err) {
       console.error("Submission error:", err);
       if (err.response) {
-        console.error("Response data:", err.response.data);
+        // console.error("Response data:", err.response.data);
         console.error("Status:", err.response.status);
       }
       const message = err.response?.data?.detail || err.message || "Failed to submit.";
@@ -806,17 +799,13 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
+    <div className="flex">
+      <SideBar />
+    <div className="min-h-screen flex-grow bg-gray-100 font-sans">
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto  px-4 py-8">
         {/* Page heading — hidden on review step */}
-        <Link 
-          to="/dashboard" 
-          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
-        >
-          <span>Exit to Dashboard</span>
-          <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-        </Link>
+
         {!submitted && (
           <div className="mb-5">
             {step === 5 ? (
@@ -884,6 +873,7 @@ useEffect(() => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 }

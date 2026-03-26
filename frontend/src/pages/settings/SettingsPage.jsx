@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import { Link } from 'react-router-dom';
-import { Lock, Bell, CreditCard, X, Save, ArrowLeft, LogIn, ShieldCheck } from 'lucide-react';
+import { Lock, Bell, CreditCard, X, User, Save, ArrowLeft, LogIn, ShieldCheck } from 'lucide-react';
+import SideBar from '../../components/SideBar'
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -92,15 +93,11 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <Link 
-      to="/dashboard" 
-      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
-    >
-      <span>Exit to Dashboard</span>
-      <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-    </Link>
-      <div className="max-w-4xl mx-auto">
+    <div className="flex">
+      <SideBar />
+
+      
+      <div className="m-5 flex-grow">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
@@ -268,47 +265,21 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Billing Information */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <CreditCard className="w-5 h-5 text-gray-400" />
-              <h2 className="text-lg font-semibold text-gray-900">Billing Information</h2>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <p className="text-sm text-gray-500">Current Plan</p>
-                <p className="text-xl font-bold text-gray-900">₱50,000 / year</p>
-                <p className="text-sm text-gray-500 mt-1">Renews on January 15, 2027</p>
-              </div>
-              <button
-                onClick={() => {/* handle upgrade */}}
-                className="px-6 py-2 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Upgrade Plan
-              </button>
-            </div>
-          </div>
 
           {/* Additional action buttons (Login, Get Verified) */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            
             <button
-              onClick={() => navigate('/login')}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <LogIn className="w-4 h-4" />
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/verify')}
+              onClick={() => navigate('/settings/profile')}
               className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors"
             >
-              <ShieldCheck className="w-4 h-4" />
-              Get Verified
+              <User className="w-4 h-4" />
+              Profile
             </button>
           </div>
         </div>
-      </div>
+      
+    </div>
     </div>
   );
 }
