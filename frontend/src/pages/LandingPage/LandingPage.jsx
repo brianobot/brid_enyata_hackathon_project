@@ -80,12 +80,12 @@ const LandingPage = () => {
           
             font-bold bg-gradient-to-b from-white via-slate-300 to-slate-500 bg-clip-text tracking-tight
           ">
-            <span className="text-[#61a979]">Verify</span> Business <span className="text-[#154470]">Credibility</span>
+            <span className="text-[#209547]">Verify</span> Business <span className="text-[#154470]">Credibility</span>
             <br />
             Before You Engage
           </h1>
           <p className="text-gray-500 text-base my-8 max-w-lg mx-auto leading-relaxed">
-            InterVerify helps you make informed decisions by provided trusted <br /> business <span className="#61a979">verification</span> data and credibility profiles across Nigeria.
+            InterVerify helps you make informed decisions by providing trusted <br /> business <span className="#61a979">verification</span> data and credibility profiles across Nigeria.
           </p>
 
           <SearchBar
@@ -128,7 +128,7 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">
               Powerful Tools for
               <br />
-              Business<span className="text-[#61a979]"> Verification</span>
+              Business<span className="text-[#209547]"> Verification</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -162,7 +162,7 @@ const LandingPage = () => {
               How it works
             </p>
             <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
-              <span className="text-[#61a979]">Verify</span> Businesses with Confidence
+              <span className="text-[#209547]">Verify</span> Businesses with Confidence
             </h2>
             <p className="text-sm text-gray-500 leading-relaxed mb-6">
               InterVerify helps you search, review, and verify businesses using trusted compliance data and credibility insights.
@@ -190,7 +190,7 @@ const LandingPage = () => {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">FAQ</h2>
             <p className="text-sm text-gray-400">
-              Everything you need to know about verifying businesses <br /> on <span className="text-[#154470]">Inter</span><span className="text-[#61a979]">Verify</span>
+              Everything you need to know about verifying businesses <br /> on <span className="text-[#154470]">Inter</span><span className="text-[#209547]">Verify</span>
             </p>
           </div>
           <div>

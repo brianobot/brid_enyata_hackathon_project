@@ -435,6 +435,7 @@ export default function Dashboard() {
       {/* ── SIDEBAR ── */}
       <SideBar/>
 
+      
       {/* ── MAIN AREA ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
 
@@ -449,8 +450,10 @@ export default function Dashboard() {
 
             {/* Bell */}
             <button
+              disabled
+              title="Notifications coming soon"
               onClick={() => setNotifOpen(true)}
-              className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
+              className="p-2 text-slate-300 cursor-not-allowed opacity-50 transition-all hover:bg-transparent relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Bell className="w-4 h-4 text-gray-500" />
               {unreadCount > 0 && (

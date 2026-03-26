@@ -6,7 +6,6 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import NotificationCenter from '../NotificationCenter.jsx'
 import SideBar from '../../components/SideBar'
 
 export default function UserProfile() {
@@ -83,7 +82,6 @@ export default function UserProfile() {
           </div>
         </div>
       </div>
-        <NotificationCenter/>
     </div>
     </div>
     
