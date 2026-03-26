@@ -1,5 +1,5 @@
 import logo from './ivnamedlogo.png'
-import logoIcon from './interverifylogo.svg'
+import logoIcon from './interverifylogo.png'
 
 
 export const assets = {

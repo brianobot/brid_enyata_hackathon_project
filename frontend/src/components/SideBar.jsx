@@ -39,15 +39,17 @@ const SideBar = () => {
         >
             {/* Logo */}
             <div className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-100 ${sidebarCollapsed ? "justify-center px-0" : ""}`}>
-            {!sidebarCollapsed ? (
-                <div>
-                    <img src={assets.logo}/>
-                </div>) :
-            
-            (<div>
-                <img src={assets.logoIcon}/>
-            </div>)
-        }
+            <Link to='/'>
+                {!sidebarCollapsed ? (
+                    <div>
+                        <img src={assets.logo}/>
+                    </div>) :
+                
+                (<div>
+                    <img src={assets.logoIcon} className="w-[150px]"/>
+                </div>)  
+                }
+             </Link>
             </div>
 
             {/* Nav items */}

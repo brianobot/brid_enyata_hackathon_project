@@ -161,18 +161,11 @@ export default function Settings() {
               )}
 
               <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
-                </button>
+
                 <button
                   type="submit"
                   disabled={isUpdatingPassword}
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2 bg-[#154470] hover:bg-blue-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
                 >
                   {isUpdatingPassword ? 'Updating...' : 'Update Password'}
                 </button>

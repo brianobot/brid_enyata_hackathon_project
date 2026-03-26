@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Shield, Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import api from '../../api/axios';
@@ -72,7 +72,15 @@ export default function SignupPage() {
   return (
     // 1. Container setup for the background mesh
     <div className="min-h-screen relative overflow-hidden font-sans flex items-center justify-center py-12">
-      
+      <button 
+          onClick={() => navigate('/')} 
+          className="group flex items-center gap-2 text-slate-400 hover:text-blue-900 mb-8 transition-colors text-sm font-bold"
+        >
+          <div className="p-2 rounded-xl bg-slate-50 group-hover:bg-blue-50 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+          </div>
+          Back to Home
+      </button>
       {/* 2. Animated Background Layers */}
       <div className="absolute inset-0 animate-mesh opacity-60 pointer-events-none" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
@@ -190,7 +198,7 @@ export default function SignupPage() {
             <button 
               type="submit"
               disabled={loading}
-              className="relative overflow-hidden w-full flex items-center justify-center gap-2 bg-[#154470] hover:bg-[#61a979] text-white font-bold py-4 rounded-xl text-sm transition-all mt-2 disabled:opacity-70 shadow-lg shadow-blue-900/20 active:scale-[0.98] group"
+              className="relative overflow-hidden w-full flex items-center justify-center gap-2 bg-[#154470] hover:bg-blue-800 text-white font-bold py-4 rounded-xl text-sm transition-all mt-2 disabled:opacity-70 shadow-lg shadow-blue-900/20 active:scale-[0.98] group"
             >
               <span className="absolute inset-0 w-full h-full transition duration-500 transform -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full"></span>
               {loading ? (
@@ -205,7 +213,7 @@ export default function SignupPage() {
 
             <p className="text-center text-sm text-slate-400 mt-2 font-medium">
               Already have an account?{" "}
-              <Link to="/login" className="text-blue-600 font-bold hover:underline">
+              <Link to="/login" className="text-[#154470] font-bold hover:underline">
                 Login
               </Link>
             </p>
