@@ -30,7 +30,7 @@ const Navbar = () => {
                     <Link to="/login" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
                         Login
                     </Link>
-                  <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+                  <button className="text-sm bg-[#154470] hover:bg-[#61a979] text-white px-4 py-2 rounded-lg transition-colors font-medium">
                     <Link to="/signup">
                         Get Started
                     </Link>

@@ -52,7 +52,7 @@ const SearchBar = ({
 
           <button
             onClick={onSearch}
-            className="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all shadow-md shadow-blue-600/20 mr-1"
+            className="bg-[#154470] hover:bg-[#61a979] active:scale-95 text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all shadow-md shadow-blue-600/20 mr-1"
           >
             Search
           </button>

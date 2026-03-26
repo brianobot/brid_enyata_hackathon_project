@@ -80,12 +80,12 @@ const LandingPage = () => {
           
             font-bold bg-gradient-to-b from-white via-slate-300 to-slate-500 bg-clip-text tracking-tight
           ">
-            Verify Business <span className="text-[#376491]">Credibility</span>
+            <span className="text-[#61a979]">Verify</span> Business <span className="text-[#154470]">Credibility</span>
             <br />
-            Before You <span className="text-[#376491]">Engage</span>
+            Before You Engage
           </h1>
           <p className="text-gray-500 text-base my-8 max-w-lg mx-auto leading-relaxed">
-            InterVerify helps you make informed decisions by provided trusted <br /> business verification data and credibility profiles across Nigeria.
+            InterVerify helps you make informed decisions by provided trusted <br /> business <span className="#61a979">verification</span> data and credibility profiles across Nigeria.
           </p>
 
           <SearchBar
@@ -128,7 +128,7 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">
               Powerful Tools for
               <br />
-              <span className="text-[#376491]">Business Verification</span>
+              Business<span className="text-[#61a979]"> Verification</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -158,11 +158,11 @@ const LandingPage = () => {
       <section className="py-20 px-6  bg-slate-50">
         <div className="max-w-5xl mx-auto flex flex-col gap-12 items-start">
           <div className="text-center mx-auto flex-shrink-0">
-            <p className="text-xs text-[#376491] font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs text-[#134470] font-semibold uppercase tracking-widest mb-3">
               How it works
             </p>
             <h2 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
-              <span className="text-[#376491]">Verify</span> Businesses with Confidence
+              <span className="text-[#61a979]">Verify</span> Businesses with Confidence
             </h2>
             <p className="text-sm text-gray-500 leading-relaxed mb-6">
               InterVerify helps you search, review, and verify businesses using trusted compliance data and credibility insights.
@@ -190,7 +190,7 @@ const LandingPage = () => {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">FAQ</h2>
             <p className="text-sm text-gray-400">
-              Everything you need to know about verifying businesses <br /> on <span className="text-blue-900">Inter</span><span className="text-green-700">Verify</span>
+              Everything you need to know about verifying businesses <br /> on <span className="text-[#154470]">Inter</span><span className="text-[#61a979]">Verify</span>
             </p>
           </div>
           <div>
@@ -202,7 +202,7 @@ const LandingPage = () => {
       </section>
 
       {/* ── CTA BANNER ── */}
-      <section className="bg-slate-900 py-20 px-6 text-center">
+      <section className="bg-[#134470] py-20 px-6 text-center">
         <div className="max-w-xl mx-auto">
           <h2 className="text-3xl font-bold text-white mb-3">
             Ready to verify businesses
@@ -210,7 +210,7 @@ const LandingPage = () => {
             with confidence?
           </h2>
           <p className="text-slate-400 text-sm mb-8">
-            Join thousands of compliance teams who trust VerifyBiz.
+            Join thousands of compliance teams who trust InterVerify.
           </p>
           <div className="flex items-center bg-slate-800 border border-slate-700 rounded-xl overflow-hidden max-w-md mx-auto">
             <input
