@@ -237,7 +237,8 @@ async def update_user(
         
         background_task.add_task(
             interswitch.verify_business,
-            user
+            user,
+            session
         )
     return user
 
