@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi.routing import APIRouter
-from pydantic import EmailStr, ValidationError
+from pydantic import BaseModel, ConfigDict, EmailStr, ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import BackgroundTasks, Body, Depends, HTTPException, status
@@ -22,7 +22,18 @@ EmailBody = Annotated[EmailStr, Body(embed=True)]
 CurrentUserDep = Annotated[UserDB, Depends(get_current_user)]
 
 
-@router.get("/search")
+class SearchBusinessModel(BaseModel):
+    model_config = ConfigDict()
+    
+    email: str
+    business_name: str
+    business_description: str | None = None
+    business_phone_number: str | None = None
+    business_website: str | None = None
+    business_address: str | None = None
+    
+
+@router.get("/search", response_model=list[SearchBusinessModel])
 async def search_businesses(keyword: str, db: DBDep):
     return await business_services.search_business(keyword, db)
     
