@@ -18,18 +18,20 @@ class RedisManager:
         pass
 
     def cache_json_item(self, key: str, value: dict[str, Any], ttl: int = 3600) -> None:
-        value_as_string = json.dumps(value)
+        # value_as_string = json.dumps(value)
         # self.redis_client.set(name=key, value=value_as_string, ex=ttl)
+        pass
 
     def get_json_item(self, key: str, default: Any | None = None):
         # value = self.redis_client.get(name=key)
         value = None
-
+        
         if value is None:
             return default
 
         value_decoded = json.loads(cast(str, value))
-        return value_decoded
+        # return value_decoded
+        return None
 
     def delete_key(self, key: str) -> None:
         # self.redis_client.delete(key)
