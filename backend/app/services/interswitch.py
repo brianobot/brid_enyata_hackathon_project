@@ -2,6 +2,7 @@ import base64
 
 from typing import Any
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.settings import Settings
 from app.models import User as UserDB
@@ -82,6 +83,11 @@ async def verify_bvn(client: AsyncClient, bvn: str):
     return await make_auth_request(client, url, "get")
 
 
+async def verify_tin(client: AsyncClient, tin: str):
+    url = f"https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/verify/identity/tin?tin={tin}"
+    return await make_auth_request(client, url, "get")
+
+
 async def verify_physical_address(client: AsyncClient, address: str):
     url = "https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/addresses"
     payload = {
@@ -100,23 +106,54 @@ async def verify_physical_address(client: AsyncClient, address: str):
         }
     }
     response = await make_auth_request(client, url, "post", payload)
-    reference = response.json().get("data", {}).get("customerReference")
+    print("Response: ", response)
+    reference = response.get("data", {}).get("customerReference")
     return await make_auth_request(client, f"{url}?reference={reference}", "get")
 
 
-async def verify_business(user: UserDB):
+async def verify_business(user: UserDB, session: AsyncSession):
     # run all the checks needed to verify a business here
     async with AsyncClient(timeout=20) as client:
-        pass
+        if user.business_cac_number:
+            cac_response = await verify_cac(client, user.business_cac_number)
+            print("✅ CAC Response: ", cac_response)
+            
+            if cac_response.get("success") is True:
+                cac_datas: list[dict[str, str]] = cac_response.get("data")
+                for cac_data in cac_datas:
+                    approved_name = cac_data.get("approved_name")
+                    print("✅ Approved Name: ", approved_name)
+                    print("✅ Business Name DB: ", user.business_name)
         
-    
+                    if approved_name == user.business_name:
+                        user.cac_is_verified = True
+                        await session.commit()
+                        break
+                    
+        if user.business_tin:
+            tin_response = await verify_tin(client, user.business_tin)
+            print("✅ TIN Response: ", tin_response)
+            
+            if tin_response.get("success") is True:
+                tin_data = tin_response.get('data', {}).get("tin")
+                print("✅ Approved Phone: ", tin_data.get("phone"))
+                print("✅ Business Phone DB: ", user.business_phone_number)
+                
+                if tin_data.get("phone") == user.business_phone_number:
+                    user.tin_is_verified = True
+                    await session.commit()
+                      
+        if user.business_address:
+            # address_response = await verify_physical_address(client, user.business_address)
+            pass
+        
     
 async def main():
     async with AsyncClient(timeout=20) as client:
         # access_token = await get_access_token(client)
         # print("Access Token: ", access_token)
-        response = await verify_cac(client, "Neem")
-        print("Response: ", response)
+        response = await verify_physical_address(client, "13 adetobi kofoworola street ajayi")
+        print(response)
 
 
 if __name__ == "__main__":
