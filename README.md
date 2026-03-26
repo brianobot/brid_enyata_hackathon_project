@@ -1,4 +1,4 @@
-# InterVerify (Enyata Hackaton 2026)
+# InterVerify ([Enyata Hackaton 2026](https://buildathon.enyata.com/))
 
 [Live Demo Link](https://brid-enyata-hackathon-project.vercel.app): 
 
