@@ -6,7 +6,7 @@
 
 
 ## Overview
-InterVerify is a decentralized business verification platform designed to foster trust within the digital economy. In an era where "ghost businesses" and digital fraud are on the rise, InterVerify provides a double-sided solution:
+InterVerify is a business verification platform designed to foster trust within the digital economy. In an era where "ghost businesses" and digital fraud are on the rise, InterVerify provides a double-sided solution:
 
 - For Businesses: A seamless onboarding experience where companies can verify their legal status, physical existence, and financial compliance to earn a "Verified" badge of trust.
 
