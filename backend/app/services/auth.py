@@ -12,10 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.logger import logger
 from app.mailer import send_mail
+from app.settings import Settings
 from app.models import User as UserDB
 from app.redis_manager import redis_manager
 from app.schemas import auth as auth_schema
-from app.settings import Settings
 
 settings = Settings()  # type: ignore
 
@@ -101,7 +101,10 @@ async def verify_user(
         template="auth/welcome.html",
     )
     return await update_user(
-        verification_data.email, auth_schema.UpdateUserModel(), session
+        verification_data.email, 
+        auth_schema.UpdateUserModel(), 
+        session,
+        None
     )
 
 
@@ -191,7 +194,10 @@ async def reset_password(
 
 
 async def update_user(
-    email: str, update_data: auth_schema.UpdateUserModel, session: AsyncSession
+    email: str, 
+    update_data: auth_schema.UpdateUserModel, 
+    session: AsyncSession,
+    background_task: BackgroundTasks | None = None
 ):
     data = update_data.model_dump(exclude_none=True, exclude_unset=True)
 
@@ -216,9 +222,24 @@ async def update_user(
         .returning(UserDB)
         .execution_options(synchronize_session="fetch")
     )
-    result = await session.execute(stmt)
+    user = (await session.execute(stmt)).scalar_one_or_none()
+    if not user:
+        raise HTTPException(
+            status_code=500,
+            detail="Fail to Update User Information"
+        )
+        
     await session.commit()
-    return result.scalar_one()
+    
+    # Start the background task for verifing all the documents of the business
+    if background_task:
+        from app.services import interswitch
+        
+        background_task.add_task(
+            interswitch.verify_business,
+            user
+        )
+    return user
 
 
 def create_access_token(

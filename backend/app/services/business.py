@@ -1,7 +1,10 @@
+from faker import Faker
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User as UserDB
+
+faker = Faker()
 
 
 async def search_business(keyword: str, session: AsyncSession):
@@ -13,33 +16,17 @@ async def search_business(keyword: str, session: AsyncSession):
         "total_pages": 1,
         "results": list(results) + [
             {
-                "name": "Sample Business Name",
-                "year_fouded": 2010,
-                "email": "business@jot.com",
-                "phone_number": "07018977031",
-                "address": "No 2345 Alien Highway",
-            },
-            {
-                "name": "Sample Business Name",
-                "year_fouded": 2010,
-                "email": "business@jot.com",
-                "phone_number": "07018977031",
-                "address": "No 2345 Alien Highway",
-            },
-            {
-                "year_fouded": 2010,
-                "business_name": "Sample Business Name",
-                "email": "business@jot.com",
-                "business_phone_number": "07018977031",
-                "business_address": "No 2345 Alien Highway",
-            },
-            {
-                "name": "Sample Business Name",
-                "year_fouded": 2010,
-                "email": "business@jot.com",
-                "phone_number": "07018977031",
-                "address": "No 2345 Alien Highway",
-            },
+                "business_name": faker.company(),
+                "year_founded": faker.year(),
+                "email": faker.email(),
+                "business_phone_number": faker.phone_number(),
+                "business_address": faker.address(),
+                "business_website": faker.url(),
+                "business_description": faker.sentence(),
+            }
+            
+            for _ in range(10)
+          
         ] 
     }
     

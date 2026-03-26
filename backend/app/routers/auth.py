@@ -96,6 +96,7 @@ async def get_user_detail(user: CurrentUserDep):
 async def update_user_detail(
     db: DBDep,
     user: CurrentUserDep,
+    background_task: BackgroundTasks,
     update_data: auth_schemas.UpdateUserModel,
 ):
-    return await auth_services.update_user(user.email, update_data, db)
+    return await auth_services.update_user(user.email, update_data, db, background_task)
