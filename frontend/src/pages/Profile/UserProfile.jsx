@@ -6,6 +6,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import NotificationCenter from '../NotificationCenter.jsx'
+import SideBar from '../../components/SideBar'
 
 export default function UserProfile() {
   const { user } = useAuth();
@@ -18,14 +20,9 @@ export default function UserProfile() {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto w-full space-y-8 animate-in fade-in duration-500">
-      <Link 
-      to="/dashboard" 
-      className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
-    >
-      <span>Exit to Dashboard</span>
-      <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-    </Link>
+    <div className="flex">
+      <SideBar />
+      <div className="p-8 max-w-5xl mx-auto w-full space-y-8 animate-in fade-in duration-500">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-center gap-6">
@@ -79,37 +76,17 @@ export default function UserProfile() {
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Security</h3>
             <div className="space-y-4">
-              <SecurityItem icon={Key} title="Change Password" desc="Update your password regularly to stay secure." />
-              <SecurityItem icon={ShieldCheck} title="Two-Factor Authentication" desc="Add an extra layer of security to your account." />
+              <Link to="/settings">
+                <SecurityItem icon={Key} title="Change Password" desc="Update your password regularly to stay secure." />
+              </Link>
             </div>
-          </div>
-        </div>
-
-        {/* Right Column: Account Stats / Quick Links */}
-        <div className="space-y-6">
-          <div className="bg-blue-900 rounded-3xl p-8 text-white shadow-xl shadow-blue-900/20">
-            <h3 className="font-bold text-lg mb-4">Verification Score</h3>
-            <div className="flex items-center gap-4">
-              <div className="text-4xl font-black italic">85%</div>
-              <div className="text-blue-200 text-xs leading-tight">
-                Your profile is almost <br /> fully verified.
-              </div>
-            </div>
-            <div className="mt-6 w-full bg-blue-800/50 h-2 rounded-full overflow-hidden">
-              <div className="bg-white h-full" style={{ width: '85%' }}></div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 space-y-2">
-            <Link to="/notifications" className="block w-full">
-                <QuickLink icon={Bell} title="Notifications" />
-            </Link>
-            <QuickLink icon={CreditCard} title="Subscription Plan" />
-            <QuickLink icon={ShieldCheck} title="Privacy Settings" />
           </div>
         </div>
       </div>
+        <NotificationCenter/>
     </div>
+    </div>
+    
   );
 }
 

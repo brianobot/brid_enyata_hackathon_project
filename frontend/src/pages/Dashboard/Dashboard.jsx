@@ -30,6 +30,7 @@ import {
   Info,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.js";
+import SideBar from "../../components/SideBar"
 
 // ── MOCK DATA ─────────────────────────────────────────────────────────────────
 const MOCK_USER = {
@@ -111,14 +112,6 @@ const MOCK_NOTIFICATIONS = [
   },
 ];
 
-const NAV_ITEMS = [
-  { label: "Dashboard",    icon: LayoutDashboard, to: "/dashboard" },
-  { label: "Verification", icon: ShieldCheck,     to: "/verify"    },
-  // { label: "Documents",    icon: FileText,        to: "/documents" },
-  { label: "Profile",      icon: User,            to: "/settings/profile"   },
-  { label: "Settings",     icon: Settings,        to: "/settings"  },
-];
-
 const stepsRemaining = MOCK_VERIFICATION_STEPS.filter(
   (s) => s.status !== "completed"
 ).length;
@@ -131,8 +124,22 @@ function PreVerificationView({ user }) {
     : MOCK_USER.name;
   const profileComplete = user?.profile_complete ?? MOCK_USER.profileComplete;
 
-  const total = MOCK_VERIFICATION_ITEMS.length;
-  const done  = 0; // replace with real completed count from API
+  // Define required documents and their display info
+  const requiredDocs = [
+    { key: "cac", title: "CAC Registration", desc: "Upload your CAC registration certificate" },
+    { key: "taxClearance", title: "Tax Compliance", desc: "Upload your tax clearance certificate" },
+    { key: "proofAddress", title: "Proof of Address", desc: "Upload proof of business address" },
+    // Add more if needed (director verification, etc.)
+  ];
+
+  // Determine which documents are uploaded (i.e., have a URL in user.documents)
+  const uploadedDocs = user?.documents ? 
+    requiredDocs.filter(doc => user.documents[doc.key] && typeof user.documents[doc.key] === 'string') 
+    : [];
+
+  const completedCount = uploadedDocs.length;
+  const totalRequired = requiredDocs.length;
+  const progressPercent = totalRequired ? (completedCount / totalRequired) * 100 : 0;
 
   return (
     <div className="space-y-5">
@@ -142,12 +149,12 @@ function PreVerificationView({ user }) {
         <h2 className="text-4xl font-black text-gray-900 mb-3">Welcome, {displayName}</h2>
         <p className="text-sm text-gray-500 leading-relaxed mb-7 max-w-md">
           Your profile is {profileComplete}% complete. Start your identity
-          verification today to unlock the full potential of interverify
+          verification today to unlock the full potential of InterVerify.
         </p>
         <div>
           <Link to="/verify">
             <button className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors">
-              Start Verfication
+              Start Verification
             </button>
           </Link>
         </div>
@@ -157,43 +164,52 @@ function PreVerificationView({ user }) {
       <div className="bg-white rounded-2xl border border-gray-100 px-6 py-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-bold text-gray-900">Verification Progress</h3>
-          <span className="text-xs text-gray-400">{done} of {total} completed</span>
+          <span className="text-xs text-gray-400">{completedCount} of {totalRequired} completed</span>
         </div>
         <div className="w-full h-1.5 bg-gray-100 rounded-full mb-2 overflow-hidden">
           <div
             className="h-full bg-gray-400 rounded-full transition-all duration-500"
-            style={{ width: `${(done / total) * 100}%` }}
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
-        <p className="text-xs text-gray-400">complete the steps to earn your Trust Seal</p>
+        <p className="text-xs text-gray-400">Complete the steps to earn your Trust Seal</p>
       </div>
 
       {/* Verification steps list */}
       <div className="bg-white rounded-2xl border border-gray-100 px-6 py-5">
-        <h3 className="text-sm font-bold text-gray-900 mb-2">Complete you verification</h3>
+        <h3 className="text-sm font-bold text-gray-900 mb-2">Complete your verification</h3>
         <div className="divide-y divide-gray-50">
-          {MOCK_VERIFICATION_ITEMS.map((item) => (
-            <div key={item.id} className="flex items-center justify-between py-4">
-              <div className="flex items-center gap-4">
-                <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <Upload className="w-4 h-4 text-gray-400" />
+          {requiredDocs.map((doc) => {
+            const isUploaded = user?.documents && user.documents[doc.key] && typeof user.documents[doc.key] === 'string';
+            return (
+              <div key={doc.key} className="flex items-center justify-between py-4">
+                <div className="flex items-center gap-4">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    isUploaded ? "bg-green-100" : "bg-gray-100"
+                  }`}>
+                    {isUploaded ? (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <Upload className="w-4 h-4 text-gray-400" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800">{doc.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{doc.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">{item.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                </div>
+                <Link to="/verify">
+                  <button className="flex items-center gap-1 text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors">
+                    {isUploaded ? "View" : "Start"} <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </Link>
               </div>
-              <Link to="/verify">
-                <button className="flex items-center gap-1 text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors">
-                  Start <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </Link>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Stats row — empty/locked */}
+      {/* Stats row — empty/locked (same as before) */}
       <div className="grid grid-cols-3 gap-4">
         {/* Trust Score */}
         <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col items-center justify-center text-center min-h-[200px]">
@@ -217,7 +233,7 @@ function PreVerificationView({ user }) {
 
         {/* Profile Views */}
         <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col min-h-[200px]">
-          <p className="text-xs text-gray-400 mb-3">profile Views</p>
+          <p className="text-xs text-gray-400 mb-3">Profile Views</p>
           <p className="text-4xl font-black text-gray-300 mt-1">0</p>
           <p className="text-xs text-gray-400 mt-3 leading-snug">
             Visibility begins after verification
@@ -366,10 +382,6 @@ function NotifIcon({ type }) {
 // ── MAIN COMPONENT ────────────────────────────────────────────────────────────
 export default function Dashboard() {
 
-  // ── DEV TOGGLE ────────────────────────────────────────────────────────────
-  // const [isVerified, setIsVerified] = useState(false);
-
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [notifOpen, setNotifOpen]               = useState(false);
   const [notifications, setNotifications]       = useState(MOCK_NOTIFICATIONS);
   const [activeNav, setActiveNav]               = useState("Dashboard");
@@ -421,73 +433,7 @@ export default function Dashboard() {
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
 
       {/* ── SIDEBAR ── */}
-      <aside
-        className={`relative flex flex-col bg-white border-r border-gray-100 transition-all duration-300 ease-in-out flex-shrink-0
-          ${sidebarCollapsed ? "w-16" : "w-44"}`}
-      >
-        {/* Logo */}
-        <div className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-100 ${sidebarCollapsed ? "justify-center px-0" : ""}`}>
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <ShieldCheck className="w-4 h-4 text-white" />
-          </div>
-          {!sidebarCollapsed && (
-            <div>
-              <p className="text-sm font-bold text-gray-900 leading-none">InterVerify</p>
-              <p className="text-[9px] text-gray-400 tracking-widest font-medium mt-0.5">TRUST REIMAGINED</p>
-            </div>
-          )}
-        </div>
-
-        {/* Nav items */}
-        <nav className="flex-1 py-4 px-2 space-y-0.5">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeNav === item.label;
-            return (
-              <Link
-                key={item.label}
-                to={item.to}
-                onClick={() => setActiveNav(item.label)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group
-                  ${isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"}
-                  ${sidebarCollapsed ? "justify-center px-0" : ""}`}
-                title={sidebarCollapsed ? item.label : undefined}
-              >
-                <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`} />
-                {!sidebarCollapsed && (
-                  <span className="text-sm font-medium">{item.label}</span>
-                )}
-              </Link>
-            );
-          })}
-          {/* Logout Button */}
-          <button
-            onClick={logout}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors w-full text-red-500 hover:bg-red-50 mt-auto
-              ${sidebarCollapsed ? "justify-center px-0" : ""}`}
-          >
-            <LogOut className="w-4.5 h-4.5 flex-shrink-0 text-red-400" />
-            {!sidebarCollapsed && (
-              <span className="text-sm font-medium">Logout</span>
-            )}
-          </button>
-        </nav>
-
-        {/* Enterprise upgrade card */}
-
-
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors z-10"
-        >
-          {sidebarCollapsed
-            ? <ChevronRight className="w-3 h-3 text-gray-500" />
-            : <ChevronLeft  className="w-3 h-3 text-gray-500" />}
-        </button>
-      </aside>
+      <SideBar/>
 
       {/* ── MAIN AREA ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -524,17 +470,6 @@ export default function Dashboard() {
           {isVerified
             ? <PostVerificationView user={user} />
             : <PreVerificationView  user={user} />}
-
-
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-6 mt-4 border-t border-gray-100">
-            <div className="flex items-center gap-4">
-              <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Privacy Policy</a>
-              <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Terms of Service</a>
-              <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Security Audit</a>
-            </div>
-            <p className="text-xs text-gray-400">© 2024 InterVerify Inc. All connections are end-to-end encrypted.</p>
-          </div>
         </main>
       </div>
 
