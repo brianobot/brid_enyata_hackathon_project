@@ -27,6 +27,12 @@ class SearchBusinessModel(BaseModel):
     
     email: str
     score: float = 50.0
+    
+    bvn_is_verified: bool
+    cac_is_verified: bool
+    tin_is_verified: bool
+    address_is_verified: bool
+    
     business_name: str
     business_description: str | None = None
     business_phone_number: str | None = None

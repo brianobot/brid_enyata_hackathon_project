@@ -16,6 +16,11 @@ async def search_business(keyword: str, session: AsyncSession):
         "total_pages": 1,
         "results": list(results) + [
             {
+                "bvn_is_verified": faker.boolean(),
+                "cac_is_verified": faker.boolean(),
+                "tin_is_verified": faker.boolean(),
+                "address_is_verified": faker.boolean(),
+                
                 "business_name": faker.company(),
                 "year_founded": faker.year(),
                 "email": faker.email(),
