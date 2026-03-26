@@ -32,7 +32,7 @@ async def search_business(keyword: str, session: AsyncSession):
     
 
 async def get_verification_score(user: UserDB):
-    return 70.23
+    return user.score
     
 
 async def verify_cac(user: UserDB):

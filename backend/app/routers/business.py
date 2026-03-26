@@ -26,6 +26,7 @@ class SearchBusinessModel(BaseModel):
     model_config = ConfigDict()
     
     email: str
+    score: float
     business_name: str
     business_description: str | None = None
     business_phone_number: str | None = None

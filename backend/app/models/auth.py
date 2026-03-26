@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, JSON
 from sqlalchemy.ext.mutable import MutableDict, MutableList
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, String, JSON
 
 from app.models._base import AbstractBase
 
@@ -43,5 +44,12 @@ class User(AbstractBase):
         default=None
     )
     
+    bvn_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    cac_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    tin_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
+    address_is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="f")
     
+    @hybrid_property
+    def score(self) -> float:
+        return 70
 
