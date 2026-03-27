@@ -1,9 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// hooks/useBusinessSearch.js
-//
-// Manages all search state and logic. Calls the real API via searchService.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState, useRef, useEffect } from 'react';
 import { searchBusinesses } from '../services/searchService';
 

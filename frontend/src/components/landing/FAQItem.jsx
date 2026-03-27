@@ -1,10 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// components/landing/FAQItem.jsx
-//
-// A single expandable FAQ row.
-// Has its own open/close state — that's intentional, it belongs to the item.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
