@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import {
   Building2, ScrollText, Landmark, ShieldCheck, CheckCircle2,
@@ -22,7 +22,7 @@ function PreVerificationView({ user }) {
       id: 1,
       title: "CAC Registration",
       description: "Company registration & legal entity verification.",
-      completed: user?.ac_is_verified || !!user?.business_cac_number,
+      completed: user?.cac_is_verified || !!user?.business_cac_number,
       icon: Building2,
     },
     {
@@ -132,11 +132,9 @@ function PreVerificationView({ user }) {
 
 // ── POST-VERIFICATION VIEW ──
 function PostVerificationView({ user }) {
-const { id } = useParams();
   const [trustScore, setTrustScore] = useState(null);
   const [scoreLoading, setScoreLoading] = useState(true);
   const [scoreError, setScoreError] = useState(false);
-  const [userData, setUserData] = useState(null);
   // const [userLoading, setUserLoading] = useState(true); // Track user fetch
 
   const displayName = user?.first_name
@@ -168,50 +166,30 @@ const { id } = useParams();
     fetchTrustScore();
   }, []);
 
-useEffect(() => {
-    if (!id) return;
-    const fetchUser = async () => {
-      try {
-        // setUserLoading(true);
-        const response = await api.get(`/businesses/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-        setUserData(response.data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        // setUserLoading(false);
-      }
-    };
-    fetchUser();
-  }, [id]);
-
 const verificationItems = [
-    { 
-      id: 1, 
-      title: "CAC Registration", 
-      desc: "Company registration", 
-      verified: !!userData?.business_cac_number, 
-      updatedDate: formatDate(userData?.business_registration_date) 
-    },
-    { 
-      id: 2, 
-      title: "Tax Compliance", 
-      desc: "Tax identification", 
-      verified: !!userData?.business_tin, 
-      updatedDate: "Mar 2026" 
-    },
-    { 
-      id: 3, 
-      title: "Address Verification", 
-      desc: "Business address proof", 
-      verified: !!userData?.business_address, 
-      updatedDate: "Mar 2026" 
-    },
-  ];
-  console.log("User data in PostVerificationView:", userData);
-  // If still loading critical user data, show a simple loader
-  // if (userLoading) return <div className="p-10 text-center animate-pulse">Loading profile...</div>;
+  {
+    id: 1,
+    title: "CAC Registration",
+    desc: "Company registration",
+    verified: !!user?.cac_is_verified,
+    updatedDate: formatDate(user?.date_updated)
+  },
+  {
+    id: 2,
+    title: "Tax Compliance",
+    desc: "Tax identification",
+    verified: !!user?.tin_is_verified,
+    updatedDate: formatDate(user?.date_updated)
+  },
+  {
+    id: 3,
+    title: "Address Verification",
+    desc: "Business address proof",
+    verified: !!user?.address_is_verified,
+    updatedDate: formatDate(user?.date_updated)
+  },
+];
+
   return (
     <div className="space-y-5">
       {/* Verified banner */}
