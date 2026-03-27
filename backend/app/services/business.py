@@ -13,8 +13,8 @@ async def search_business(keyword: str, session: AsyncSession):
         or_(
             UserDB.email.icontains(keyword),
             UserDB.business_address.icontains(keyword),
-            UserDB.business_name.icontains(keyword),
             UserDB.business_cac_number.ilike(keyword),
+            UserDB.business_name.icontains(keyword),
         )
     )
     results = (await session.execute(stmt)).scalars().all()
