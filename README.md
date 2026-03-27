@@ -1,6 +1,6 @@
 # InterVerify ([Enyata Hackaton 2026](https://buildathon.enyata.com/))
 
-💻 [Live Demo Link](https://brid-enyata-hackathon-project.vercel.app) <br/>
+💻 [Live Demo Link](https://interverify.netlify.app/) <br/>
 🎨 [Design Link](https://www.figma.com/design/ynlSxgw5MA9398E9rWsNex/Interverify?node-id=19-2&p=f&t=HJ7heIpRK1UELGPz-0) <br/>
 
 ![Home Page Screenshot](images/homepage_screenshot.png)
@@ -27,8 +27,8 @@ InterVerify is a decentralized business verification platform designed to foster
 
 
 ## How to Test
-1. Visit the [Homepage](https://brid-enyata-hackathon-project.vercel.app) 
-2. Search for Business through the Search Functionality in the [Homepage](https://brid-enyata-hackathon-project.vercel.app/) Hero section
+1. Visit the [Homepage](https://interverify.netlify.app/) 
+2. Search for Business through the Search Functionality in the [Homepage](https://interverify.netlify.app/) Hero section
   Note: The list of business returned are mostly fake data that is being used to seed the application to simulate a better user experience for the purpose of demoing the application in the hackaton
   - Each returned business has a name, address, verification score along side other useful business information
   - Clicking on see more would carry you to a detail page of the business listing for your keyword
