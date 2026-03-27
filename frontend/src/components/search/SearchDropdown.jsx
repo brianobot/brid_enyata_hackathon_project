@@ -1,4 +1,3 @@
-// components/search/SearchDropdown.jsx
 import { Building2, MapPin, AlertCircle, Loader2, ArrowRight, BadgeCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TrustBadge from './TrustBadge';

@@ -11,7 +11,6 @@ import PublicProfile from './pages/Profile/PublicProfile.jsx';
 import VerificationFlow from './pages/Verification/VerificationFlow';
 import SettingsPage from './pages/settings/SettingsPage.jsx';
 import UserProfile from './pages/Profile/UserProfile.jsx';
-import NotificationCenter from './pages/NotificationCenter.jsx';
 
 const App = () => {
   return (
@@ -53,14 +52,6 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <UserProfile />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/notifications" 
-            element={
-              <ProtectedRoute>
-                <NotificationCenter />
               </ProtectedRoute>
             } 
           />
