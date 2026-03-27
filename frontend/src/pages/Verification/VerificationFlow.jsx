@@ -710,7 +710,6 @@ useEffect(() => {
   const handleSubmit = async () => {
 
     setIsUploading(true);
-    const loadingToast = toast.loading("Uploading documents...");
 
     try {
       const docUrls = {};
@@ -759,7 +758,7 @@ useEffect(() => {
 
       if (response.status === 202) {
         
-        toast.success("Verification application submitted successfully!", { id: loadingToast });
+        toast.success("Verification application submitted successfully!");
         
         setSubmitted(true);
         await refreshUser();   
