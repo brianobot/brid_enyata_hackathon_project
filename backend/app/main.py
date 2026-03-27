@@ -47,6 +47,7 @@ def initiate_app():
         # Add allowed origins here
         "http://localhost:4000",
         "http://localhost:5173",
+        "https://interverify.netlify.app"
         "https://brid-enyata-hackathon-project.vercel.app",
     ]
 
