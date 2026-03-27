@@ -18,6 +18,7 @@ import {
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import api from "../../api/axios";
+import PlainNavbar from '../../components/navbar/PlainNavbar';
 
 // ── SHARED UI HELPERS ─────────────────────────────────────────────────────────
 
@@ -166,7 +167,7 @@ export default function PublicProfile() {
 
   return (
     <div className="min-h-screen pt-32 bg-gray-100 font-sans text-gray-800">
-      <Navbar />
+      <PlainNavbar />
 
       {/* Breadcrumb */}
       <div className="max-w-5xl mx-auto px-4 pb-16 space-y-4">

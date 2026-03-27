@@ -104,7 +104,6 @@ function StepBar({ currentStep }) {
           const Icon = s.icon;
           const done    = s.id < currentStep;
           const active  = s.id === currentStep;
-          const future  = s.id > currentStep;
           return (
             <div
               key={s.id}
@@ -403,7 +402,7 @@ function Step4({ documents, onChangeDoc, onBack, onNext }) {
 }
 
 // ─── STEP 5: REVIEW & SUBMIT ──────────────────────────────────────────────────
-function ReviewSection({ icon: Icon, title, onEdit, children }) {
+function ReviewSection({ icon: title, onEdit, children }) {
   return (
     <div className="border border-gray-200 rounded-2xl p-6 mb-4">
       <div className="flex items-center justify-between mb-4">
@@ -577,8 +576,7 @@ function SuccessScreen() {
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function VerificationFlow() {
-  const { user, token ,refreshUser } = useAuth();
-  const navigate = useNavigate();
+  const { user, refreshUser } = useAuth();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -711,6 +709,10 @@ useEffect(() => {
 
 // Handle final submission
   const handleSubmit = async () => {
+    if (!formData.businessName || !formData.registrationNumber) {
+    toast.error("Required information is missing. Please review your details.");
+    return;
+  }
     setIsUploading(true);
     const loadingToast = toast.loading("Uploading documents...");
 
@@ -797,6 +799,8 @@ useEffect(() => {
       </div>
     );
   }
+
+  
 
   return (
     <div className="flex">
