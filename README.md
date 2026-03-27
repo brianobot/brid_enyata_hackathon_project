@@ -28,7 +28,7 @@ InterVerify is a business verification platform designed to foster trust within 
 ## Tech Stack
 | Component | Technology |
 | :--- | :--- |
-| Frontend  | Next.js, Tailwind CSS, TypeScript |
+| Frontend  | React, Tailwindcss, JavaScript |
 | Backend   | FastAPI ([API Docs](https://brid-enyata-hackathon-project.onrender.com/docs)) |
 | Payment/Identity | Interswitch API |
 | Design | Figma |
@@ -38,6 +38,6 @@ InterVerify is a business verification platform designed to foster trust within 
 ## The Team
 Developed with ❤️ by The Real Awesome People:
 
-- [Brian Obot](https://github.com/brianobot) - Backend Developer (Backend Lead)
 - [Idongesit Inyang](https://github.com/id-inyang) - Frontend Developer (Frontend Lead)
+- [Brian Obot](https://github.com/brianobot) - Backend Developer (Backend Lead)
 - [Angel Emele](https://github.com/Angelle-ace) - Product Manager / UI Designer (Design Lead)
