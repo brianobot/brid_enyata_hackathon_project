@@ -20,7 +20,7 @@ async def search_business(keyword: str, session: AsyncSession):
     results = (await session.execute(stmt)).scalars().all()
     
     return {
-        "count": 4,
+        "count": len(results),
         "total_pages": 1,
         "results": list(results)
     }
