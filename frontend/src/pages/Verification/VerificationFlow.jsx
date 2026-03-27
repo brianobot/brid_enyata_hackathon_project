@@ -560,9 +560,8 @@ function SuccessScreen() {
       </div>
       <h2 className="text-2xl font-bold text-gray-900 mb-3">Application Submitted!</h2>
       <p className="text-gray-500 text-sm max-w-sm mx-auto mb-2 leading-relaxed">
-        Your verification application has been received. We'll review it and get back to you within 24–48 hours.
+        Your verification application has been received
       </p>
-      <p className="text-sm text-gray-400 mb-8">Check your email for updates.</p>
       <button
         onClick={() => {
           navigate("/dashboard")}}
@@ -709,10 +708,7 @@ useEffect(() => {
 
 // Handle final submission
   const handleSubmit = async () => {
-    if (!formData.businessName || !formData.registrationNumber) {
-    toast.error("Required information is missing. Please review your details.");
-    return;
-  }
+
     setIsUploading(true);
     const loadingToast = toast.loading("Uploading documents...");
 
@@ -764,6 +760,7 @@ useEffect(() => {
       const response = await api.patch("/auth/me", payload);
 
       if (response.status === 202) {
+        
         toast.success("Verification application submitted successfully!", { id: loadingToast });
         
         setSubmitted(true);

@@ -28,16 +28,15 @@ const NAV_ITEMS = [
 
 const SideBar = () => {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [activeNav, setActiveNav]               = useState("Dashboard");
-    const { logout, user, loading } = useAuth();
+    const { logout } = useAuth();
 
     return (
-        <div>
-            <aside
-            className={`relative flex flex-col bg-white border-r h-[100%] border-gray-100 transition-all duration-300 ease-in-out flex-shrink-0
-            ${sidebarCollapsed ? "w-16" : "w-44"}`}
+        <aside
+            className={`relative flex flex-col bg-white border-r h-screen border-gray-100 transition-all duration-300 ease-in-out 
+            ${sidebarCollapsed ? "w-16" : "w-48"}`}
         >
-            {/* Logo */}
+            {/* Logo Section */}
+                        {/* Logo */}
             <div className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-100 ${sidebarCollapsed ? "justify-center px-0" : ""}`}>
             <Link to='/'>
                 {!sidebarCollapsed ? (
@@ -52,55 +51,56 @@ const SideBar = () => {
              </Link>
             </div>
 
-            {/* Nav items */}
-            <nav className="flex-1 py-4 px-2 space-y-0.5">
-            {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeNav === item.label;
-                return (
-                <Link
-                    key={item.label}
-                    to={item.to}
-                    onClick={() => setActiveNav(item.label)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group
-                    ${isActive
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"}
-                    ${sidebarCollapsed ? "justify-center px-0" : ""}`}
-                    title={sidebarCollapsed ? item.label : undefined}
-                >
-                    <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`} />
-                    {!sidebarCollapsed && (
-                    <span className="text-sm font-medium">{item.label}</span>
-                    )}
-                </Link>
-                );
-            })}
-            {/* Logout Button */}
-            <button
-                onClick={logout}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors w-full text-red-500 hover:bg-red-50 mt-auto
-                ${sidebarCollapsed ? "justify-center px-0" : ""}`}
-            >
-                <LogOut className="w-4.5 h-4.5 flex-shrink-0 text-red-400" />
-                {!sidebarCollapsed && (
-                <span className="text-sm font-medium">Logout</span>
-                )}
-            </button>
+            {/* Navigation Menu */}
+            <nav className="flex flex-col flex-1 px-3 pb-6">
+                {/* 1. TOP SECTION: Use flex-1 to push everything else down */}
+                <div className="flex-1 space-y-1">
+                    {NAV_ITEMS.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = window.location.pathname === item.to;
+                        return (
+                            <Link
+                                key={item.label}
+                                to={item.to}
+                                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all
+                                ${isActive 
+                                    ? "bg-blue-50 text-blue-600 shadow-sm shadow-blue-900/5" 
+                                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                                } ${sidebarCollapsed ? "justify-center px-0" : ""}`}
+                            >
+                                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`} />
+                                {!sidebarCollapsed && (
+                                    <span className="text-sm font-bold tracking-tight">{item.label}</span>
+                                )}
+                            </Link>
+                        );
+                    })}
+                </div>
+
+                {/* 2. BOTTOM SECTION: Logout stays at the bottom */}
+                <div className="pt-4 border-t border-gray-50 mt-4">
+                    <button
+                        onClick={logout}
+                        className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-red-500 hover:bg-red-50
+                        ${sidebarCollapsed ? "justify-center px-0" : ""}`}
+                    >
+                        <LogOut className="w-5 h-5 flex-shrink-0 text-red-400 group-hover:text-red-500" />
+                        {!sidebarCollapsed && (
+                            <span className="text-sm font-bold tracking-tight">Logout</span>
+                        )}
+                    </button>
+                </div>
             </nav>
 
             {/* Collapse toggle */}
             <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="absolute -right-3 top-20 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors z-10"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="absolute -right-3 top-20 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-all z-50 hover:scale-110"
             >
-            {sidebarCollapsed
-                ? <ChevronRight className="w-3 h-3 text-gray-500" />
-                : <ChevronLeft  className="w-3 h-3 text-gray-500" />}
+                {sidebarCollapsed ? <ChevronRight className="w-3 h-3 text-gray-500" /> : <ChevronLeft className="w-3 h-3 text-gray-500" />}
             </button>
         </aside>
-        </div>
-    )
-}
+    );
+};
 
 export default SideBar

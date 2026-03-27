@@ -1,362 +1,262 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Shield,
-  MapPin,
-  CheckCircle,
-  Globe,
-  Phone,
-  Mail,
-  MessageSquare,
-  ExternalLink,
-  Star,
-  Building2,
-  Flag,
-  AlertCircle,
-  Loader2,
+  Shield, MapPin, Globe, Phone, Mail, 
+  MessageSquare, ExternalLink, Star, Building2, Flag, 
+  AlertCircle, Loader2, ArrowLeft, BadgeCheck, Scale, 
+  FileCheck, ShieldCheck, Globe2
 } from "lucide-react";
-import Navbar from "../../components/Navbar";
+import PlainNavbar from '../../components/navbar/PlainNavbar';
 import Footer from "../../components/Footer";
 import api from "../../api/axios";
-import PlainNavbar from '../../components/navbar/PlainNavbar';
 
-// ── SHARED UI HELPERS ─────────────────────────────────────────────────────────
+// ─── REDESIGNED HELPER COMPONENTS ─────────────────────────────────────────────
 
-function StarRating({ rating, max = 5, size = "w-4 h-4" }) {
-  if (!rating) return null;
+function NewTrustScoreCircle({ score }) {
+  const normalizedScore = score ?? 0;
+  // Use professional SaaS color palette (Blue for solid trust, Gray for new)
+  const color = normalizedScore > 70 ? 'text-blue-600' : normalizedScore > 40 ? 'text-blue-500' : 'text-slate-400';
+  
   return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: max }).map((_, i) => (
-        <Star
-          key={i}
-          className={`${size} ${
-            i < Math.floor(rating)
-              ? "text-yellow-400 fill-yellow-400"
-              : i < rating
-              ? "text-yellow-400 fill-yellow-200"
-              : "text-gray-300 fill-gray-100"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-
-function CircleScore({ score }) {
-  const r    = 36;
-  const circ = 2 * Math.PI * r;
-
-  if (score === null || score === undefined) {
-    return (
-      <div className="relative w-20 h-20 flex items-center justify-center">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r={r} strokeWidth="6" stroke="#e5e7eb" fill="none" />
-        </svg>
-        <span className="text-sm font-bold text-gray-400 z-10">N/A</span>
-      </div>
-    );
-  }
-
-  const offset = circ - (score / 100) * circ;
-  return (
-    <div className="relative w-20 h-20 flex items-center justify-center">
-      <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r={r} strokeWidth="6" stroke="#e5e7eb" fill="none" />
+    <div className="relative flex items-center justify-center w-40 h-40">
+      <svg className="w-full h-full transform -rotate-90">
+        <circle cx="80" cy="80" r="74" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-100" />
         <circle
-          cx="40" cy="40" r={r}
-          strokeWidth="6"
-          stroke="#16a34a"
-          fill="none"
-          strokeDasharray={circ}
-          strokeDashoffset={offset}
+          cx="80" cy="80" r="74" stroke="currentColor" strokeWidth="8" fill="transparent"
+          strokeDasharray={464.9} // 2 * PI * 74
+          strokeDashoffset={464.9 - (464.9 * normalizedScore) / 100}
           strokeLinecap="round"
+          className={`${color} transition-all duration-1000 ease-out`}
         />
       </svg>
-      <span className="text-xl font-bold text-gray-900 z-10">{score}</span>
+      <div className="absolute flex flex-col items-center">
+        <span className="text-5xl font-black text-slate-950 tracking-tight">{normalizedScore}</span>
+        <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-1">Trust Score</span>
+      </div>
     </div>
   );
 }
 
-function ProgressBar({ value }) {
+function NewComplianceItem({ label, isVerified, icon: IconComponent, description }) {
   return (
-    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-      <div className="h-full bg-gray-800 rounded-full" style={{ width: `${value}%` }} />
+    <div className="flex items-start gap-4 p-5 bg-white border border-slate-100 rounded-3xl transition-all hover:border-slate-200">
+      <div className={`p-3 rounded-2xl flex-shrink-0 ${isVerified ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-400'}`}>
+        {IconComponent ? <IconComponent className="w-6 h-6" /> : null}
+      </div>
+      <div className="flex-grow">
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <span className="text-base font-bold text-slate-900">{label}</span>
+          {isVerified ? (
+            <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50/50 px-3 py-1 rounded-full border border-blue-100">
+              <BadgeCheck className="w-4 h-4" />
+              <span className="text-[10px] font-bold uppercase tracking-wide">Verified</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-[10px] font-bold uppercase tracking-wide">Pending</span>
+            </div>
+          )}
+        </div>
+        <p className="text-xs text-slate-500 font-medium leading-relaxed">{description || "Verification pending review by compliance team."}</p>
+      </div>
     </div>
   );
 }
 
-function getTrustLabel(score) {
-  if (score === null || score === undefined) return '—';
-  if (score >= 80) return 'Excellent';
-  if (score >= 60) return 'Good';
-  if (score >= 40) return 'Fair';
-  return 'Low';
-}
+// ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
-// Build compliance rows from the API's boolean verification flags
-function buildComplianceItems(biz) {
-  return [
-    biz.cac_is_verified     !== undefined && { title: "CAC Registration",     subtitle: "Corporate identity verified",   verified: biz.cac_is_verified     },
-    biz.tin_is_verified     !== undefined && { title: "Tax Compliance",        subtitle: "Current and compliant",         verified: biz.tin_is_verified     },
-    biz.bvn_is_verified     !== undefined && { title: "Director Verification", subtitle: "Directors background checked",  verified: biz.bvn_is_verified     },
-    biz.address_is_verified !== undefined && { title: "Address Verified",      subtitle: "Business address confirmed",    verified: biz.address_is_verified },
-  ].filter(Boolean);
-}
-
-// ── MAIN COMPONENT ────────────────────────────────────────────────────────────
-
-export default function PublicProfile() {
+export default function RedesignedPublicProfile() {
+  const { id } = useParams();
   const location = useLocation();
-  const navigate  = useNavigate();
-
-  // Business data comes from the router state set by SearchResultsPage:
-  //   navigate('/business/profile', { state: { business: bizObject } })
-  // The bizObject already contains real data from the search API response.
-  const bizFromSearch = location.state?.business ?? null;
-
-  // ── Trust Score — from GET /v1/businesses/verification/score ─────────────
-  // Seed with the score from the search result so the circle renders immediately
-  const [trustScore, setTrustScore]     = useState(
-    typeof bizFromSearch?.trustScore === 'number' ? bizFromSearch.trustScore : null
-  );
-  const [scoreLoading, setScoreLoading] = useState(true);
-  const [scoreError, setScoreError]     = useState(false);
+  const navigate = useNavigate();
+  
+  const [business, setBusiness] = useState(location.state?.business || null);
+  const [loading, setLoading] = useState(!location.state?.business);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchScore = async () => {
-      try {
-        setScoreLoading(true);
-        const res    = await api.get('/businesses/verification/score');
-        const parsed = parseFloat(res.data);
-        if (!isNaN(parsed)) setTrustScore(parsed);
-      } catch (err) {
-        console.error('[PublicProfile] Failed to fetch trust score:', err);
-        setScoreError(true);
-        // Keep the score from search result as a fallback
-      } finally {
-        setScoreLoading(false);
-      }
-    };
-    fetchScore();
-  }, []);
+    if (!business) {
+      const fetchBusiness = async () => {
+        try {
+          setLoading(true);
+          const response = await api.get(`/businesses/${id}`);
+          setBusiness(response.data);
+        } catch (err) {
+          setError("This business profile could not be retrieved. It may be inactive or private.");
+          console.error("Profile Fetch Error:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchBusiness();
+    }
+  }, [id, business]);
 
-  // ── No data guard ─────────────────────────────────────────────────────────
-  if (!bizFromSearch) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 font-sans">
-        <Navbar />
-        <div className="max-w-5xl mx-auto px-4 py-20 text-center">
-          <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-base font-semibold text-gray-500 mb-2">Business not found</p>
-          <p className="text-sm text-gray-400 mb-6">
-            No business data was provided. Please search for a business first.
-          </p>
-          <button onClick={() => navigate('/')} className="text-sm text-blue-600 hover:underline">
-            ← Back to search
-          </button>
-        </div>
-        <Footer />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+        <Loader2 className="w-10 h-10 text-blue-900 animate-spin mb-4" />
+        <p className="text-slate-500 font-medium">Loading professional credibility profile...</p>
       </div>
     );
   }
 
-  const biz             = bizFromSearch;
-  const complianceItems = buildComplianceItems(biz);
-  const trustLabel      = getTrustLabel(trustScore);
-  const isVerified      = biz.status === 'verified';
+  if (error || !business) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-6 text-center">
+        <div className="p-4 bg-red-100 rounded-2xl mb-5 text-red-600">
+          <AlertCircle className="w-12 h-12" />
+        </div>
+        <h2 className="text-3xl font-black text-slate-950 tracking-tight">Profile Not Available</h2>
+        <p className="text-slate-500 mt-2 max-w-sm font-medium">{error}</p>
+        <button onClick={() => navigate('/')} className="mt-8 bg-slate-900 text-white px-7 py-3 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all">
+          <ArrowLeft className="w-4 h-4" /> BACK TO HOME PAGE
+        </button>
+      </div>
+    );
+  }
+
+  const isFullyVerified = business.cac_is_verified && business.tin_is_verified;
 
   return (
-    <div className="min-h-screen pt-32 bg-gray-100 font-sans text-gray-800">
+    <div className="min-h-screen bg-[#F8FAFC]">
       <PlainNavbar />
-
-      {/* Breadcrumb */}
-      <div className="max-w-5xl mx-auto px-4 pb-16 space-y-4">
-
-        {/* Business Header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-start gap-5">
-            <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Building2 className="w-8 h-8 text-gray-400" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{biz.name}</h1>
-                  <p className="text-sm text-gray-500 mt-0.5 flex items-center gap-1.5">
-                    {biz.category ?? 'Business'}
-                    {biz.location && (
-                      <>
-                        <span className="text-gray-300">·</span>
-                        <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                        {biz.location}
-                      </>
-                    )}
-                  </p>
-                </div>
-                {isVerified && (
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-50 border border-green-100 px-3 py-1 rounded-full ml-4 flex-shrink-0">
-                    <CheckCircle className="w-3.5 h-3.5" /> Verified
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3 mt-4">
-                {biz.phone && (
-                  <button className="flex items-center gap-2 bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    <MessageSquare className="w-4 h-4" /> Contact Business
-                  </button>
-                )}
-                {biz.website && (
-                  <a
-                    href={biz.website.startsWith('http') ? biz.website : `https://${biz.website}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 border border-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" /> Visit Website
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {biz.description && (
-            <>
-              <hr className="my-5 border-gray-100" />
-              <p className="text-sm text-gray-600 leading-relaxed">{biz.description}</p>
-            </>
-          )}
+      
+      {/* 1. Professional Cover Area (Modern SaaS Mesh Gradient) */}
+      <div className="w-full h-[320px] pt-24 relative overflow-hidden bg-white">
+        <div className="absolute inset-0 opacity-60">
+          {/* A simple, clean mesh gradient to ground the design */}
+          <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_#E0F2FE_0%,_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(at_bottom_left,_#E0E7FF_0%,_transparent_50%)]" />
         </div>
-
-        {/* Two-column layout */}
-        <div className="flex gap-4 items-start">
-
-          {/* LEFT COLUMN */}
-          <div className="flex-1 space-y-4 min-w-0">
-
-            {/* Trust & Credibility Score */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-sm font-semibold text-gray-800 mb-5">Trust &amp; Credibility Score</h2>
-              <div className="flex items-center gap-4 mb-6">
-                {scoreLoading ? (
-                  <div className="w-20 h-20 flex items-center justify-center">
-                    <Loader2 className="w-6 h-6 text-gray-300 animate-spin" />
-                  </div>
-                ) : (
-                  <CircleScore score={trustScore} />
-                )}
-                <div>
-                  <p className="text-sm font-semibold text-green-600">Trust Score</p>
-                  <p className="text-xs text-gray-400">
-                    {scoreLoading
-                      ? 'Loading...'
-                      : scoreError && trustScore === null
-                      ? 'Unavailable'
-                      : trustLabel}
-                  </p>
-                </div>
-              </div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2.5 text-sm font-bold text-slate-500 hover:text-blue-900 transition-colors">
+            <div className="p-2 rounded-lg bg-white shadow-sm border border-slate-100">
+              <ArrowLeft className="w-3.5 h-3.5" />
             </div>
+            Back to Directory Results
+          </button>
+        </div>
+      </div>
 
-            {/* Verification & Compliance */}
-            {complianceItems.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full border-2 border-green-500" />
-                  Verification &amp; Compliance
-                </h2>
-                <div className="space-y-3">
-                  {complianceItems.map((c) => (
-                    <div
-                      key={c.title}
-                      className={`flex items-center justify-between rounded-xl px-4 py-3 border ${
-                        c.verified ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className={`w-5 h-5 flex-shrink-0 ${c.verified ? 'text-green-500' : 'text-gray-300'}`} />
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">{c.title}</p>
-                          <p className="text-xs text-gray-500">{c.subtitle}</p>
-                        </div>
-                      </div>
-                      <span className={`text-xs font-semibold ${c.verified ? 'text-green-600' : 'text-gray-400'}`}>
-                        {c.verified ? 'Verified' : 'Unverified'}
-                      </span>
+      {/* 2. Main overlapping Profile Section */}
+      <div className="max-w-7xl mx-auto px-6 -mt-36 relative z-20">
+        
+        {/* The overlapping Main Header Card */}
+        <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-xl shadow-blue-950/5 mb-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div className="flex items-center gap-6">
+              {/* Refined Icon Block */}
+              <div className="w-24 h-24 bg-slate-950 rounded-[32px] flex items-center justify-center text-white shadow-xl shadow-slate-950/20 flex-shrink-0">
+                <Building2 className="w-12 h-12" />
+              </div>
+              <div>
+                <div className="flex items-center gap-3 mb-1.5">
+                  <h1 className="text-4xl font-black text-slate-950 tracking-tight">{business.business_name || business.name}</h1>
+                  {isFullyVerified && (
+                    <div className="p-1 bg-blue-100 rounded-full border border-blue-200">
+                      <BadgeCheck className="w-6 h-6 text-blue-600" />
                     </div>
-                  ))}
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-slate-500 text-base font-semibold">
+                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-400" /> {business.business_address || business.location || "Nigeria"}</span>
+                  <span className="w-1.5 h-1.5 bg-slate-200 rounded-full hidden md:block" />
+                  <a href={`http://${business.business_website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+                    <Globe2 className="w-4 h-4 text-blue-400" /> {business.business_website || "No website"}
+                  </a>
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div className="w-64 flex-shrink-0 space-y-4">
-
-            {/* Contact Information */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h2 className="text-sm font-semibold text-gray-800 mb-4">Contact Information</h2>
-              <div className="space-y-3">
-                {biz.phone && (
-                  <a href={`tel:${biz.phone}`} className="flex items-center gap-2.5 text-sm text-blue-600 hover:underline">
-                    <Phone className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                    {biz.phone}
-                  </a>
-                )}
-                {biz.email && (
-                  <a href={`mailto:${biz.email}`} className="flex items-center gap-2.5 text-sm text-blue-600 hover:underline break-all">
-                    <Mail className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                    {biz.email}
-                  </a>
-                )}
-                {biz.website && (
-                  <a
-                    href={biz.website.startsWith('http') ? biz.website : `https://${biz.website}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2.5 text-sm text-blue-600 hover:underline"
-                  >
-                    <Globe className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                    {biz.website}
-                  </a>
-                )}
-                {biz.location && (
-                  <span className="flex items-center gap-2.5 text-sm text-gray-500">
-                    <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    {biz.location}
-                  </span>
-                )}
-              </div>
             </div>
 
-            {/* Verified Business badge */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <Shield className={`w-8 h-8 mb-3 ${isVerified ? 'text-blue-600' : 'text-gray-300'}`} />
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                {isVerified ? 'Verified Business' : 'Verification Pending'}
-              </h3>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                {isVerified
-                  ? "This business has completed InterVerify's comprehensive verification process including background checks and compliance verification."
-                  : "This business has not yet completed the full verification process."}
-              </p>
-            </div>
-
-            {/* Report an Issue */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h3 className="text-sm font-semibold text-gray-800 mb-1">Report an Issue</h3>
-              <p className="text-xs text-gray-400 mb-4">
-                Found incorrect information or have concerns about this business?
-              </p>
-              <button className="w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-700 text-sm font-medium py-2 rounded-xl hover:bg-gray-50 transition-colors">
-                <Flag className="w-3.5 h-3.5" /> Report Issue
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <button className="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all flex items-center gap-2.5">
+                <Globe className="w-4 h-4" /> Business Website
+              </button>
+              <button className="bg-blue-600 text-white px-7 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center gap-2.5">
+                <MessageSquare className="w-4 h-4" /> Message Business
               </button>
             </div>
           </div>
         </div>
+
+        {/* 3. Refined Grid Layout (Stronger architecture) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          
+          {/* Left Column: Essential Details */}
+          <div className="lg:col-span-2 space-y-10">
+            <section className="bg-white p-10 rounded-[36px] border border-slate-100 shadow-sm">
+              <h2 className="text-2xl font-black text-slate-950 mb-5 tracking-tight">Corporate Overview</h2>
+              <p className="text-slate-600 leading-relaxed font-medium text-base">
+                {business.business_description || "This business has successfully completed key foundational verification steps. A custom business description has not been provided yet by the profile owner."}
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-black text-slate-950 mb-6 tracking-tight px-2">Verification & Compliance Status</h2>
+              <div className="space-y-4">
+                <NewComplianceItem 
+                  label="CAC Corporate Registration" 
+                  isVerified={business.cac_is_verified} 
+                  icon={FileCheck} 
+                  description="Confirmation of valid Corporate Affairs Commission registration records."
+                />
+                <NewComplianceItem 
+                  label="Taxpayer Identification (TIN)" 
+                  isVerified={business.tin_is_verified} 
+                  icon={Scale} 
+                  description="Verification of valid Federal Inland Revenue Service (FIRS) tax data."
+                />
+                <NewComplianceItem 
+                  label="Operational Address" 
+                  isVerified={business.address_is_verified} 
+                  icon={MapPin} 
+                  description="Validation of physical business location through utility or lease records."
+                />
+              </div>
+            </section>
+          </div>
+
+          {/* Right Column: Key Trust Metrics & Certification */}
+          <div className="space-y-10">
+            {/* Redesigned Trust Score Card */}
+            <section className="bg-white p-10 rounded-[36px] border border-slate-100 shadow-sm flex flex-col items-center text-center">
+              <NewTrustScoreCircle score={business.score || business.trustScore} />
+              <div className="mt-8">
+                <h3 className="text-xl font-black text-slate-950 tracking-tight">Credential Trust Rating</h3>
+                <p className="text-sm text-slate-400 mt-2 font-medium px-2 leading-relaxed">
+                  Calculated based on document authenticity, registry matching, and corporate data transparency.
+                </p>
+              </div>
+            </section>
+
+            {/* Redesigned Certification Card (Uses platform colors but refined) */}
+            <section className="bg-[#E0F2FE]/60 border border-blue-100 p-10 rounded-[36px] text-slate-900 relative overflow-hidden transition-all hover:bg-[#E0F2FE]/80">
+              <div className="relative z-10">
+                <div className="p-3 bg-white rounded-2xl inline-block mb-5 shadow-sm border border-blue-100 text-blue-600">
+                  <ShieldCheck className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 tracking-tight">Verified by InterVerify</h3>
+                <p className="text-slate-600 text-sm leading-relaxed font-medium">
+                  Businesses carrying this badge have successfully passed our automated and manual compliance checks, significantly reducing transactional risk.
+                </p>
+              </div>
+              {/* Stylized background watermark */}
+              <div className="absolute -right-12 -bottom-12 opacity-[0.05] text-blue-600">
+                <Shield className="w-48 h-48" />
+              </div>
+            </section>
+
+            <button className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl border border-dashed border-slate-200 text-slate-400 font-bold hover:border-red-200 hover:text-red-500 transition-all group hover:bg-red-50 text-sm">
+              <Flag className="w-4 h-4 group-hover:fill-red-500 transition-all" /> Report Discrepancy or Feedback
+            </button>
+          </div>
+        </div>
       </div>
 
+      {/* Spacing above footer */}
+      <div className="pb-16" />
       <Footer />
     </div>
   );

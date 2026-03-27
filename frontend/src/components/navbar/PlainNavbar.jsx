@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'; // Added useEffect and useState
-import { Link, useNavigate } from 'react-router-dom';
+import { LinK,  } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { assets } from '../../assets/assets';
+import { LayoutDashboard } from 'lucide-react';
 
 const PlainNavbar = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false); // Track scroll state
 
 
@@ -23,10 +23,6 @@ const PlainNavbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   return (
     <nav 
@@ -42,21 +38,17 @@ const PlainNavbar = () => {
         </Link>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-row gap-4">
         {isAuthenticated ? (
           <>
             <Link
               to="/dashboard"
-              className="text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm font-bold text-gray-600 hover:text-gray-900 flex gap-2 items-center transition-colors"
             >
+              <LayoutDashboard className={`w-3.5 h-4.5 `} />
               Dashboard
             </Link>
-            <button
-              onClick={handleLogout}
-              className="text-xs bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl transition-all font-bold border border-red-100"
-            >
-              Logout
-            </button>
+
           </>
         ) : (
           <>

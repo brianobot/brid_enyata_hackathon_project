@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import { Link } from 'react-router-dom';
 import { Lock, Bell, CreditCard, X, User, Save, ArrowLeft, LogIn, ShieldCheck } from 'lucide-react';
 import SideBar from '../../components/SideBar'
 
-export default function Settings() {
-  const navigate = useNavigate();
-  const { user, token } = useAuth();
 
+export default function Settings() {
+  useAuth();
   // Password form state
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -68,7 +66,7 @@ export default function Settings() {
 
     setIsUpdatingPassword(true);
     try {
-      const response = await api.patch('/auth/me', {
+      await api.patch('/auth/me', {
         old_password: currentPassword,
         new_password: newPassword,
       });
@@ -252,7 +250,7 @@ export default function Settings() {
                 title="FEATURE COMING SOON"
                 onClick={saveNotificationPreferences}
                 // disabled={isSavingNotifs}
-                className="flex items-center gap-2 px-6 py-2 bg-gray-800 cursor-not-allowed opacity-50 transition-all text-white rounded-xl font-medium transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2 bg-gray-800 cursor-not-allowed opacity-50 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 {isSavingNotifs ? 'Saving...' : 'Save Preferences'}

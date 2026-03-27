@@ -92,8 +92,8 @@ export const PRO_FEATURES = [
 
 export const FAQS = [
   {
-    q: "What's included in the verification process'?",
-    a: "InterVerify reviews official business information such as CAC registration records, tax compliance data, and supporting documents during verification",
+    q: "What's included in the verification process?",
+    a: "InterVerify reviews official business information such as CAC registration records, tax compliance data, and supporting documents during verification.",
   },
   {
     q: "How accurate is the business verification data?",
@@ -101,7 +101,28 @@ export const FAQS = [
   },
   {
     q: "Who can use InterVerify?",
-    a: "InterVerify is designed for businesses, freelancers, investors, and professionals who want to verify the credibility of companies before working with them",
+    a: "InterVerify is designed for businesses, freelancers, investors, and professionals who want to verify the credibility of companies before working with them.",
+  },
+  // --- NEW ADDITIONS BELOW ---
+  {
+    q: "How is the Trust Score calculated?",
+    a: "The Trust Score is a proprietary metric derived from your verification level (CAC, TIN, Address), age of business, and history of successful compliance. Higher scores lead to better placement in search results.",
+  },
+  {
+    q: "How long does the verification process take?",
+    a: "Once you submit your documents through our 5-step flow, initial automated checks happen instantly. Manual document review typically takes 24–48 hours depending on the complexity.",
+  },
+  {
+    q: "Can I update my documents after submission?",
+    a: "Yes. If a document expires or your business details change, you can update your information from your dashboard to maintain your verification badge and trust rating.",
+  },
+  {
+    q: "Is my business data secure with InterVerify?",
+    a: "Security is our priority. All sensitive documents (like Director IDs and Tax filings) are encrypted at rest and are only used for the sole purpose of credibility assessment.",
+  },
+  {
+    q: "What happens if my verification is rejected?",
+    a: "If an application is rejected, you will receive a specific reason (e.g., blurry document or mismatched TIN). You can resolve the issue and resubmit without starting the entire process over.",
   },
 ];
 
