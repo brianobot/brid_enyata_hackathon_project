@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import {
   Building2, ScrollText, Landmark, ShieldCheck, CheckCircle2,
@@ -7,6 +8,7 @@ import {
 import SideBar from "../../components/SideBar";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
+
 
 // ── PRE-VERIFICATION VIEW ──
 function PreVerificationView({ user }) {
@@ -130,14 +132,23 @@ function PreVerificationView({ user }) {
 
 // ── POST-VERIFICATION VIEW ──
 function PostVerificationView({ user }) {
+const { id } = useParams();
+  const [trustScore, setTrustScore] = useState(null);
+  const [scoreLoading, setScoreLoading] = useState(true);
+  const [scoreError, setScoreError] = useState(false);
+  const [userData, setUserData] = useState(null);
+  // const [userLoading, setUserLoading] = useState(true); // Track user fetch
+
   const displayName = user?.first_name
     ? `${user.first_name} ${user.last_name || ""}`.trim()
     : "User";
 
-  // Trust score fetch
-  const [trustScore, setTrustScore] = useState(null);
-  const [scoreLoading, setScoreLoading] = useState(true);
-  const [scoreError, setScoreError] = useState(false);
+  // Helper function for date formatting
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return isNaN(date) ? dateString : date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+  };
 
   useEffect(() => {
     const fetchTrustScore = async () => {
@@ -157,13 +168,50 @@ function PostVerificationView({ user }) {
     fetchTrustScore();
   }, []);
 
-  // Build verification items based on user data
-  const verificationItems = [
-    { id: 1, title: "CAC Registration", desc: "Company registration", verified: !!user?.business_cac_number, updatedDate: "Mar 2026" },
-    { id: 2, title: "Tax Compliance", desc: "Tax identification", verified: !!user?.business_tin, updatedDate: "Mar 2026" },
-    { id: 3, title: "Address Verification", desc: "Business address proof", verified: !!user?.business_address, updatedDate: "Mar 2026" },
-  ];
+useEffect(() => {
+    if (!id) return;
+    const fetchUser = async () => {
+      try {
+        // setUserLoading(true);
+        const response = await api.get(`/businesses/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        // setUserLoading(false);
+      }
+    };
+    fetchUser();
+  }, [id]);
 
+const verificationItems = [
+    { 
+      id: 1, 
+      title: "CAC Registration", 
+      desc: "Company registration", 
+      verified: !!userData?.business_cac_number, 
+      updatedDate: formatDate(userData?.business_registration_date) 
+    },
+    { 
+      id: 2, 
+      title: "Tax Compliance", 
+      desc: "Tax identification", 
+      verified: !!userData?.business_tin, 
+      updatedDate: "Mar 2026" 
+    },
+    { 
+      id: 3, 
+      title: "Address Verification", 
+      desc: "Business address proof", 
+      verified: !!userData?.business_address, 
+      updatedDate: "Mar 2026" 
+    },
+  ];
+  console.log("User data in PostVerificationView:", userData);
+  // If still loading critical user data, show a simple loader
+  // if (userLoading) return <div className="p-10 text-center animate-pulse">Loading profile...</div>;
   return (
     <div className="space-y-5">
       {/* Verified banner */}
@@ -288,8 +336,6 @@ export default function Dashboard() {
   // Determine if the user has completed the verification form
   const isVerified = !!(user?.business_name && user?.business_cac_number && user?.business_tin);
 
-  // Show skeleton loader while auth is initializing
-  // Show skeleton loader while loading
   if (loading) {
     return (
       <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
