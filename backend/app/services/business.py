@@ -11,10 +11,10 @@ faker = Faker()
 async def search_business(keyword: str, session: AsyncSession):
     stmt = select(UserDB).where(
         or_(
-            UserDB.email.contains(keyword),
-            UserDB.business_address.contains(keyword),
-            UserDB.business_name.contains(keyword),
-            UserDB.business_cac_number==keyword,
+            UserDB.email.icontains(keyword),
+            UserDB.business_address.icontains(keyword),
+            UserDB.business_name.icontains(keyword),
+            UserDB.business_cac_number.ilike(keyword),
         )
     )
     results = (await session.execute(stmt)).scalars().all()
