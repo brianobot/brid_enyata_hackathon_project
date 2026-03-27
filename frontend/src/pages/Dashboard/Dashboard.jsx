@@ -113,7 +113,7 @@ function PreVerificationView({ user }) {
           <div className="h-1.5 bg-gray-100 rounded-full w-1/2 mb-auto" />
           <div className="flex items-center gap-2 mt-4">
             <Lock className="w-4 h-4 text-blue-400" />
-            <p className="text-sm font-bold text-blue-600">Unlock Feature</p>
+            <p className="text-sm font-bold text-blue-600">Coming Soon</p>
           </div>
         </div>
         <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col min-h-[200px]">
@@ -234,16 +234,24 @@ function PostVerificationView({ user }) {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <p className="text-xs text-gray-500 mb-2">Profile Completion</p>
-          <p className="text-4xl font-black text-gray-900 mt-1">85%</p>
-          <p className="text-xs text-gray-400 mt-3">Add more details to boost visibility</p>
+        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col min-h-[200px]">
+          <p className="text-xs text-gray-400 mb-3">Recommendations</p>
+          <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-2" />
+          <div className="h-1.5 bg-gray-100 rounded-full w-1/2 mb-auto" />
+          <div className="flex items-center gap-2 mt-4">
+            <Lock className="w-4 h-4 text-blue-400" />
+            <p className="text-sm font-bold text-blue-600">Coming Soon</p>
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <p className="text-xs text-gray-500 mb-2">Profile Views</p>
-          <p className="text-4xl font-black text-gray-900 mt-1">0</p>
-          <p className="text-xs text-gray-400 mt-3">Visibility grows with verification</p>
+        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col min-h-[200px]">
+          <p className="text-xs text-gray-400 mb-3">Profile views</p>
+          <div className="h-1.5 bg-gray-200 rounded-full w-3/4 mb-2" />
+          <div className="h-1.5 bg-gray-100 rounded-full w-1/2 mb-auto" />
+          <div className="flex items-center gap-2 mt-4">
+            <Lock className="w-4 h-4 text-blue-400" />
+            <p className="text-sm font-bold text-blue-600">Coming Soon</p>
+          </div>
         </div>
       </div>
 
@@ -314,10 +322,10 @@ export default function Dashboard() {
 
   // Render dashboard with appropriate view
   return (
-    <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-gray-50  font-sans overflow-hidden">
       <SideBar />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col pt-10 px-5 overflow-hidden">
         {/* Header */}
         <header className="flex items-center justify-between mb-8 px-2">
           <div>

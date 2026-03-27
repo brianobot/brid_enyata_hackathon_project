@@ -1,18 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// pages/LandingPage.jsx
-//
-// Responsible for ONE thing: assemble the landing page layout.
-// No API calls. No business logic. No data definitions.
-// If something looks wrong on the page, the bug is probably NOT here.
-//
-// Where to look instead:
-//   copy/data changes     → constants/landingData.js
-//   search state/logic    → hooks/useBusinessSearch.js
-//   API call / mapping    → services/searchService.js
-//   search UI pieces      → components/search/
-//   FAQ accordion         → components/landing/FAQItem.jsx
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState } from 'react';
 import {
   Star, Building2, Globe, FileText, Shield,
@@ -23,7 +8,6 @@ import Footer    from '../../components/Footer';
 import FAQItem   from '../../components/landing/FAQItem';
 import SearchBar             from '../../components/search/SearchBar';
 import SearchResultsPage     from '../../components/search/SearchResultsPage';
-import BusinessProfileModal  from '../../components/search/BusinessProfileModal';
 import StatsSection from "../../components/StatsSection"
 import { useBusinessSearch } from '../../hooks/useBusinessSearch';
 import {
@@ -42,11 +26,8 @@ const FEATURE_ICONS = {
 const LandingPage = () => {
   const [footerEmail, setFooterEmail] = useState('');
 
-  // All search state + handlers come from the hook — zero search logic here
   const search = useBusinessSearch();
 
-  // ── FULL RESULTS PAGE ──────────────────────────────────────────────────────
-  // When the user submits a search, swap the whole page for the results view
   if (search.showResultsPage) {
     return (
       <>

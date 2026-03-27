@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect and useState
+import React, { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { assets } from '../assets/assets';
@@ -61,7 +61,7 @@ const Navbar = () => {
       })}
     </div>
 
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-row items-center gap-4">
         {isAuthenticated ? (
           <>
             <Link
@@ -79,7 +79,10 @@ const Navbar = () => {
               to="/login"
               className="text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors"
             >
+              <div className="">
+
               Login
+              </div>
             </Link>
             <Link to="/signup">
               <button className="text-sm bg-[#154470] hover:bg-blue-800 text-white px-6 py-2.5 rounded-xl transition-all font-bold shadow-lg shadow-blue-900/10">

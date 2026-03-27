@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'; // Added useEffect and useState
-import { LinK,  } from 'react-router-dom';
+import { Link,  } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { assets } from '../../assets/assets';
 import { LayoutDashboard } from 'lucide-react';
@@ -38,7 +38,7 @@ const PlainNavbar = () => {
         </Link>
       </div>
 
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-row items-center gap-4">
         {isAuthenticated ? (
           <>
             <Link

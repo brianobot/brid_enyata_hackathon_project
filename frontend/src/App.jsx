@@ -11,6 +11,7 @@ import PublicProfile from './pages/Profile/PublicProfile.jsx';
 import VerificationFlow from './pages/Verification/VerificationFlow';
 import SettingsPage from './pages/settings/SettingsPage.jsx';
 import UserProfile from './pages/Profile/UserProfile.jsx';
+import BusinessDetails from './pages/BusinessDetails/BusinessDetails.jsx';
 
 const App = () => {
   return (
@@ -55,6 +56,8 @@ const App = () => {
               </ProtectedRoute>
             } 
           />
+
+          <Route path="/directory" element={<ProtectedRoute><BusinessDetails /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

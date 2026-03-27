@@ -1,10 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// components/search/SearchResultsPage.jsx
-//
-// Full-page results view shown when the user submits a search.
-// No state. No logic. Pure display component.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { Building2, MapPin, AlertCircle, BadgeCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TrustBadge from './TrustBadge';

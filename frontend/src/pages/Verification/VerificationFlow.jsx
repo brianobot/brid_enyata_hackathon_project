@@ -710,7 +710,6 @@ useEffect(() => {
   const handleSubmit = async () => {
 
     setIsUploading(true);
-    const loadingToast = toast.loading("Uploading documents...");
 
     try {
       const docUrls = {};
@@ -730,8 +729,6 @@ useEffect(() => {
         }
         // If none of the above match, the doc was never uploaded — skip it
       }
-
-      toast.loading("Submitting verification data...", { id: loadingToast });
 
       // 2. Build the payload for PATCH /auth/me
       const payload = {
@@ -761,7 +758,7 @@ useEffect(() => {
 
       if (response.status === 202) {
         
-        toast.success("Verification application submitted successfully!", { id: loadingToast });
+        toast.success("Verification application submitted successfully!");
         
         setSubmitted(true);
         await refreshUser();   
@@ -771,11 +768,8 @@ useEffect(() => {
     } catch (err) {
       console.error("Submission error:", err);
       if (err.response) {
-        // console.error("Response data:", err.response.data);
-        console.error("Status:", err.response.status);
+        console.error("Server response:", err.response.data);
       }
-      const message = err.response?.data?.detail || err.message || "Failed to submit.";
-      toast.error(`Error: ${message}`, { id: loadingToast });
     } finally {
       setIsUploading(false);
     }
