@@ -15,7 +15,7 @@ import api from "../../api/axios";
 function NewTrustScoreCircle({ score }) {
   const normalizedScore = score ?? 0;
   // Use professional SaaS color palette (Blue for solid trust, Gray for new)
-  const color = normalizedScore > 70 ? 'text-blue-600' : normalizedScore > 40 ? 'text-blue-500' : 'text-slate-400';
+  const color = normalizedScore > 70 ? 'text-blue-600' : normalizedScore > 40 ? 'text-blue-500' : 'text-red-400';
   
   return (
     <div className="relative flex items-center justify-center w-40 h-40">
@@ -120,40 +120,32 @@ export default function RedesignedPublicProfile() {
   const isFullyVerified = business.cac_is_verified && business.tin_is_verified;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="mt-[200px]">
       <PlainNavbar />
-      
-      {/* 1. Professional Cover Area (Modern SaaS Mesh Gradient) */}
-      <div className="w-full h-[320px] pt-24 relative overflow-hidden bg-white">
-        <div className="absolute inset-0 opacity-60">
-          {/* A simple, clean mesh gradient to ground the design */}
-          <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_#E0F2FE_0%,_transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(at_bottom_left,_#E0E7FF_0%,_transparent_50%)]" />
-        </div>
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2.5 text-sm font-bold text-slate-500 hover:text-blue-900 transition-colors">
-            <div className="p-2 rounded-lg bg-white shadow-sm border border-slate-100">
-              <ArrowLeft className="w-3.5 h-3.5" />
-            </div>
-            Back to Directory Results
-          </button>
-        </div>
-      </div>
+
 
       {/* 2. Main overlapping Profile Section */}
       <div className="max-w-7xl mx-auto px-6 -mt-36 relative z-20">
-        
+                <button
+            onClick={() => navigate('/')}
+            className="group flex items-center pt-10 pl-5 gap-2 text-slate-400 hover:text-blue-900 mb-8 transition-colors text-sm font-bold"
+          >
+            <div className="p-2 rounded-xl bg-slate-50 group-hover:bg-blue-50 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            BACK TO HOME PAGE
+        </button>
         {/* The overlapping Main Header Card */}
-        <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-xl shadow-blue-950/5 mb-12">
+        <div className="bg-white p-10  border border-slate-100 shadow-xl rounded-xl shadow-blue-950/5 mb-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
             <div className="flex items-center gap-6">
               {/* Refined Icon Block */}
-              <div className="w-24 h-24 bg-slate-950 rounded-[32px] flex items-center justify-center text-white shadow-xl shadow-slate-950/20 flex-shrink-0">
+              <div className="w-24 h-24 bg-gray-200 rounded-[22px] flex items-center justify-center text-white flex-shrink-0">
                 <Building2 className="w-12 h-12" />
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1.5">
-                  <h1 className="text-4xl font-black text-slate-950 tracking-tight">{business.business_name || business.name}</h1>
+                  <h1 className="text-4xl font-bold  tracking-tight">{business.business_name || business.name}</h1>
                   {isFullyVerified && (
                     <div className="p-1 bg-blue-100 rounded-full border border-blue-200">
                       <BadgeCheck className="w-6 h-6 text-blue-600" />
@@ -171,12 +163,10 @@ export default function RedesignedPublicProfile() {
             </div>
 
             <div className="flex items-center gap-4 flex-shrink-0">
-              <button className="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all flex items-center gap-2.5">
+              <button disabled cursor className="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all flex items-center gap-2.5">
                 <Globe className="w-4 h-4" /> Business Website
               </button>
-              <button className="bg-blue-600 text-white px-7 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center gap-2.5">
-                <MessageSquare className="w-4 h-4" /> Message Business
-              </button>
+              
             </div>
           </div>
         </div>
@@ -186,8 +176,8 @@ export default function RedesignedPublicProfile() {
           
           {/* Left Column: Essential Details */}
           <div className="lg:col-span-2 space-y-10">
-            <section className="bg-white p-10 rounded-[36px] border border-slate-100 shadow-sm">
-              <h2 className="text-2xl font-black text-slate-950 mb-5 tracking-tight">Corporate Overview</h2>
+            <section className="bg-white p-10 rounded-[16px] border border-slate-100 shadow-xl shadow-gray-950/5">
+              <h2 className="text-2xl font-bold text-slate-950 mb-5 tracking-tight">Corporate Overview</h2>
               <p className="text-slate-600 leading-relaxed font-medium text-base">
                 {business.business_description || "This business has successfully completed key foundational verification steps. A custom business description has not been provided yet by the profile owner."}
               </p>
@@ -247,10 +237,6 @@ export default function RedesignedPublicProfile() {
                 <Shield className="w-48 h-48" />
               </div>
             </section>
-
-            <button className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl border border-dashed border-slate-200 text-slate-400 font-bold hover:border-red-200 hover:text-red-500 transition-all group hover:bg-red-50 text-sm">
-              <Flag className="w-4 h-4 group-hover:fill-red-500 transition-all" /> Report Discrepancy or Feedback
-            </button>
           </div>
         </div>
       </div>
