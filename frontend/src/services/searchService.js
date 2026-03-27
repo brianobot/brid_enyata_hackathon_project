@@ -1,93 +1,70 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // services/searchService.js
 //
-// Responsible for ONE thing: talk to Brian's search API and return data.
-// No state. No JSX. No UI logic.
-//
-// To swap in a different API endpoint, update ONLY this file.
+// Calls the real search API and maps the response to the shape the UI expects.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import api from '../api/axios';
-// import { MOCK_BUSINESSES } from '../constants/landingData';
 
 // ── MAPPER ────────────────────────────────────────────────────────────────────
-// Translates Brian's API response shape → the shape our UI components expect.
+// Translates one result item from the API response into the shape our
+// UI components (SearchDropdown, SearchResultsPage, TrustBadge) expect.
 //
-// If Brian renames a field, update ONLY the LEFT side of the relevant line.
-// The RIGHT side (our internal field names) never changes.
+// Real API response shape (from swagger):
+// {
+//   email, score,
+//   bvn_is_verified, cac_is_verified, tin_is_verified, address_is_verified,
+//   business_name, business_description,
+//   business_phone_number, business_website, business_address
+// }
 //
-// Current API field names (dummy data — update when Brian confirms real names):
-//   id, name, reg_number / regNumber / cac_number,
-//   category / industry, location / city,
-//   status / verified, trust_score / trustScore / score, founded / year_founded
-//
-const mapBusiness = (raw) => ({
-  id:         raw.id,
-  name:       raw.name,
-  regNumber:  raw.reg_number   ?? raw.regNumber   ?? raw.cac_number  ?? '',
-  category:   raw.category     ?? raw.industry    ?? '',
-  location:   raw.location     ?? raw.city        ?? '',
-  status:     raw.status       ?? (raw.verified ? 'verified' : 'pending'),
-  trustScore: raw.trust_score  ?? raw.trustScore  ?? raw.score       ?? 0,
-  founded:    raw.founded      ?? raw.year_founded ?? '',
+const mapBusiness = (raw, index) => ({
+  // Use email as a stable unique key since there's no id field in the response
+  id: raw.email ?? index,
+
+  // Display fields
+  name:        raw.business_name        ?? 'Unknown Business',
+  description: raw.business_description ?? '',
+  location:    raw.business_address     ?? '',
+  phone:       raw.business_phone_number ?? '',
+  website:     raw.business_website     ?? '',
+  email:       raw.email                ?? '',
+
+  // The real trust score from the API — used directly by TrustBadge
+  trustScore: typeof raw.score === 'number' ? raw.score : null,
+
+  // Derive verified status from the individual verification flags.
+  // A business is "verified" if at least CAC and TIN are verified.
+  status: (raw.cac_is_verified && raw.tin_is_verified) ? 'verified' : 'pending',
+
+  // Individual verification flags — used by PublicProfile compliance section
+  cac_is_verified:     raw.cac_is_verified     ?? false,
+  tin_is_verified:     raw.tin_is_verified      ?? false,
+  bvn_is_verified:     raw.bvn_is_verified      ?? false,
+  address_is_verified: raw.address_is_verified  ?? false,
+
+  // These fields don't come from search — will be null until profile page loads
+  category:   null,
+  regNumber:  null,
+  founded:    null,
 });
 
-// ── MAIN EXPORT ───────────────────────────────────────────────────────────────
-// searchBusinesses(keyword)
-//   → calls GET /v1/businesses/search?keyword=<keyword>
-//   → returns Promise<Business[]>  (mapped to our internal shape)
-//   → falls back to filtered MOCK_BUSINESSES if the API is unreachable
+// ── SEARCH FUNCTION ───────────────────────────────────────────────────────────
+// Returns Promise<{ results: Business[], totalCount: number, totalPages: number }>
 //
 export const searchBusinesses = async (keyword) => {
-  try {
-    const response = await api.get('/businesses/search', {
-      params: { keyword },
-    });
+  
+  const response = await api.get('/businesses/search', {
+    params: { keyword },
+  });
 
-    // Handle both response shapes Brian might return:
-    //   { data: [...] }  OR  { results: [...] }  OR  just  [...]
-    const raw = Array.isArray(response.data)
-      ? response.data
-      : response.data?.data ?? response.data?.results ?? [];
+  // API returns: { count, total_pages, results: [...] }
+  const data = response.data;
+  const rawResults = Array.isArray(data?.results) ? data.results : [];
 
-    return raw.map(mapBusiness);
-
-  } catch (error) {
-    // ── Error type guide ──────────────────────────────────────────────────────
-    //
-    // error.response        server replied with an error status
-    //   .status 422         invalid/missing keyword  (won't happen — we guard
-    //                       against empty input before calling this function)
-    //   .status 401         token expired — axios interceptor auto-redirects
-    //   .status 500         Brian's server crashed
-    //
-    // error.request         request fired but got NO response
-    //                       (ngrok tunnel down, CORS not yet configured, offline)
-    //
-    // anything else         something broke before the request even fired
-    //
-    if (error.response) {
-      console.error('[searchService] Server error:', error.response.status, error.response.data);
-    } else if (error.request) {
-      console.warn('[searchService] No response — API may be down. Using mock data.');
-    } else {
-      console.error('[searchService] Unexpected error:', error.message);
-    }
-
-    // ── FALLBACK ──────────────────────────────────────────────────────────────
-    // While Brian's API / ngrok is unavailable, filter mock data locally so the
-    // UI remains functional during development.
-    //
-    // ⚠️  DELETE these lines (and the MOCK_BUSINESSES import above) once
-    //     Brian's API is stable and CORS is resolved.
-    //
-    const q = keyword.toLowerCase();
-    return MOCK_BUSINESSES.filter(
-      (b) =>
-        b.name.toLowerCase().includes(q)        ||
-        b.regNumber.toLowerCase().includes(q)   ||
-        b.category.toLowerCase().includes(q)    ||
-        b.location.toLowerCase().includes(q)
-    );
-  }
+  return {
+    results:     rawResults.map(mapBusiness),
+    totalCount:  data?.count       ?? rawResults.length,
+    totalPages:  data?.total_pages ?? 1,
+  };
 };

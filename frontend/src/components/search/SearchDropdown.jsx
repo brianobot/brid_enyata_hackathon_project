@@ -1,20 +1,14 @@
-// ─────────────────────────────────────────────────────────────────────────────
 // components/search/SearchDropdown.jsx
-//
-// The live results dropdown that appears below the search bar while typing.
-// No state. No logic. Pure display component.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { Building2, MapPin, AlertCircle, Loader2, ArrowRight, BadgeCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import TrustBadge from './TrustBadge';
 
-const SearchDropdown = ({ results, query, loading, onSelect, onViewAll }) => {
+const SearchDropdown = ({ results, query, loading, onViewAll }) => {
   if (!query) return null;
 
   return (
     <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden">
 
-      {/* Loading state */}
       {loading ? (
         <div className="flex items-center justify-center gap-2 py-6 text-sm text-gray-400">
           <Loader2 className="w-4 h-4 animate-spin" />
@@ -22,7 +16,6 @@ const SearchDropdown = ({ results, query, loading, onSelect, onViewAll }) => {
         </div>
 
       ) : results.length === 0 ? (
-        /* Empty state */
         <div className="py-8 text-center">
           <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm font-medium text-gray-500">No businesses found</p>
@@ -32,7 +25,6 @@ const SearchDropdown = ({ results, query, loading, onSelect, onViewAll }) => {
         </div>
 
       ) : (
-        /* Results list */
         <>
           <div className="px-3 py-2 border-b border-gray-100">
             <p className="text-xs text-gray-400 font-medium">
@@ -43,8 +35,9 @@ const SearchDropdown = ({ results, query, loading, onSelect, onViewAll }) => {
           <ul className="max-h-72 overflow-y-auto divide-y divide-gray-50">
             {results.map((biz) => (
               <li key={biz.id}>
-                <button
-                  onClick={() => onSelect(biz)}
+                <Link
+                  to={`/profile/${biz.id}`}
+                  state={{ business: biz }}  // pass business data to profile page
                   className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 transition-colors text-left group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -72,12 +65,12 @@ const SearchDropdown = ({ results, query, loading, onSelect, onViewAll }) => {
                       <AlertCircle className="w-4 h-4 text-yellow-400" />
                     )}
                   </div>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
 
-          {/* View all link */}
+          {/* View all link – keep as button with onViewAll */}
           <div className="px-4 py-2.5 border-t border-gray-100 bg-gray-50">
             <button
               onClick={onViewAll}

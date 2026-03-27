@@ -6,9 +6,18 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Building2, MapPin, AlertCircle, BadgeCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import TrustBadge from './TrustBadge';
 
 const SearchResultsPage = ({ query, results, onBack, onSelect }) => {
+  const navigate = useNavigate();
+
+  // When a result is clicked, pass the full business object via router state
+  // so PublicProfile can display it without an extra API call
+  const handleSelect = (biz) => {
+    if (onSelect) onSelect(biz);
+    navigate(`/profile/${biz.id}`, { state: { business: biz } });
+  };
   return (
     <div className="min-h-screen bg-gray-50 pt-28 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
@@ -37,7 +46,7 @@ const SearchResultsPage = ({ query, results, onBack, onSelect }) => {
             {results.map((biz) => (
               <button
                 key={biz.id}
-                onClick={() => onSelect(biz)}
+                onClick={() => handleSelect(biz)}
                 className="w-full bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-md hover:border-blue-200 transition-all text-left group"
               >
                 <div className="flex items-center justify-between">
