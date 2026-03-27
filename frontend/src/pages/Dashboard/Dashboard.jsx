@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+// import { toast } from 'react-hot-toast';
+// import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShieldCheck,
@@ -78,44 +80,7 @@ const MOCK_VERIFICATION_ITEMS = [
   { id: 4, title: "Financial Records",     desc: "Upload financial documents", updatedDate: "Jan 2026" },
 ];
 
-const MOCK_NOTIFICATIONS = [
-  {
-    id: 1,
-    type: "info",
-    title: "Document Upload Required",
-    message: "Please upload your incorporation certificate to continue the Legal Documents step.",
-    time: "2 hours ago",
-    read: false,
-  },
-  {
-    id: 2,
-    type: "success",
-    title: "Identity Check Passed",
-    message: "Your government ID and biometric verification was successful.",
-    time: "1 day ago",
-    read: false,
-  },
-  {
-    id: 3,
-    type: "warning",
-    title: "Profile Incomplete",
-    message: "Your profile is only 15% complete. Add more details to improve your trust score.",
-    time: "2 days ago",
-    read: true,
-  },
-  {
-    id: 4,
-    type: "info",
-    title: "Welcome to InterVerify",
-    message: "Get started by completing your identity verification to earn your Trust Seal.",
-    time: "3 days ago",
-    read: true,
-  },
-];
 
-const stepsRemaining = MOCK_VERIFICATION_STEPS.filter(
-  (s) => s.status !== "completed"
-).length;
 
 // ── PRE-VERIFICATION VIEW ──
 function PreVerificationView({ user }) {
@@ -298,9 +263,9 @@ function PostVerificationView({ user }) {
             <ShieldCheck className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-900">Your Business is verified</p>
+            <p className="text-sm font-bold text-gray-900">Good news, {displayName} — your business is verified</p>
             <p className="text-xs text-gray-500 mt-0.5">
-              Your business profile is active and visible to potential clients. Last updated {mockStats.lastUpdated}.
+              Your business profile is active and visible to potential clients.
             </p>
             <div className="w-44 h-1.5 bg-green-200 rounded-full mt-3 overflow-hidden">
               <div className="h-full bg-green-500 rounded-full w-full" />
@@ -366,29 +331,6 @@ function PostVerificationView({ user }) {
             </>
           )}
         </div>
-
-        {/* Recommendations — still mock */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs text-gray-500">Recommendations</p>
-            <span className="w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-              {mockStats.recommendationsPending}
-            </span>
-          </div>
-          <p className="text-4xl font-black text-gray-900 mt-1">{mockStats.recommendations}</p>
-          <p className="text-xs text-gray-400 mt-3">{mockStats.recommendationsPending} Pending</p>
-        </div>
-
-        {/* Profile Views — still mock */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs text-gray-500">profile Views</p>
-            <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
-              <TrendingUp className="w-3 h-3" /> {mockStats.profileViewsDelta}
-            </span>
-          </div>
-          <p className="text-4xl font-black text-gray-900 mt-1">{mockStats.profileViews.toLocaleString()}</p>
-        </div>
       </div>
 
       {/* Profile Completion */}
@@ -450,12 +392,10 @@ function NotifIcon({ type }) {
 
 // ── MAIN COMPONENT ────────────────────────────────────────────────────────────
 export default function Dashboard() {
-
+  // const navigate = useNavigate();
   const [notifOpen, setNotifOpen]               = useState(false);
-  const [notifications, setNotifications]       = useState(MOCK_NOTIFICATIONS);
-  const [activeNav, setActiveNav]               = useState("Dashboard");
 
-  const { logout, user, loading } = useAuth();  // <-- also get loading
+  const { user, loading } = useAuth();  // <-- also get loading
 
   // Safe initials
   const initials = user?.first_name && user?.last_name
@@ -464,38 +404,35 @@ export default function Dashboard() {
 
   const isVerified = !!(user?.business_name && user?.business_cac_number && user?.business_tin);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllRead = () =>
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-
-  const markRead = (id) =>
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-
   // Show a loading spinner while auth is initializing
-  if (loading) {
+if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Loading your dashboard...</p>
+      <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+        {/* Sidebar skeleton */}
+        <div className="w-44 bg-white border-r border-gray-100 flex flex-col animate-pulse">
+          <div className="h-16 bg-gray-200 m-4 rounded-lg" />
+          <div className="space-y-2 px-4">
+            {[1,2,3,4,5].map(i => <div key={i} className="h-8 bg-gray-200 rounded-lg" />)}
+          </div>
+        </div>
+        {/* Main content skeleton */}
+        <div className="flex-1 flex flex-col">
+          <div className="h-16 bg-white border-b border-gray-100 animate-pulse" />
+          <div className="flex-1 p-6 space-y-6">
+            <div className="h-48 bg-gray-200 rounded-2xl" />
+            <div className="grid grid-cols-3 gap-4">
+              {[1,2,3].map(i => <div key={i} className="h-40 bg-gray-200 rounded-2xl" />)}
+            </div>
+            <div className="h-32 bg-gray-200 rounded-2xl" />
+          </div>
         </div>
       </div>
     );
   }
 
-  // If user is still null after loading, maybe redirect to login (but AuthProvider should handle that)
+  // If user is still null (should be caught by useEffect, but as a fallback)
   if (!user) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <p className="text-gray-500">Unable to load user data. Please try logging in again.</p>
-          <Link to="/login" className="mt-4 inline-block text-blue-600 hover:underline">Go to login</Link>
-        </div>
-      </div>
-    );
+    return null; // or a minimal spinner while redirecting
   }
 
   return (
@@ -522,12 +459,10 @@ export default function Dashboard() {
               disabled
               title="Notifications coming soon"
               onClick={() => setNotifOpen(true)}
-              className="p-2 text-slate-300 cursor-not-allowed opacity-50 transition-all hover:bg-transparent relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
+              className="p-2 text-slate-300 cursor-not-allowed opacity-50 hover:bg-transparent relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Bell className="w-4 h-4 text-gray-500" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-              )}
+              
             </button>
 
             {/* Avatar */}
@@ -562,21 +497,9 @@ export default function Dashboard() {
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-bold text-gray-900">Notifications</h2>
-            {unreadCount > 0 && (
-              <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">
-                {unreadCount}
-              </span>
-            )}
           </div>
           <div className="flex items-center gap-2">
-            {unreadCount > 0 && (
-              <button
-                onClick={markAllRead}
-                className="text-xs text-blue-600 hover:underline font-medium"
-              >
-                Mark all read
-              </button>
-            )}
+
             <button
               onClick={() => setNotifOpen(false)}
               className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
@@ -584,49 +507,6 @@ export default function Dashboard() {
               <X className="w-4 h-4 text-gray-500" />
             </button>
           </div>
-        </div>
-
-        {/* Notification list */}
-        <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
-          {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center px-6">
-              <Bell className="w-10 h-10 text-gray-200 mb-3" />
-              <p className="text-sm font-medium text-gray-400">No notifications yet</p>
-            </div>
-          ) : (
-            notifications.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => markRead(n.id)}
-                className={`w-full text-left px-5 py-4 hover:bg-gray-50 transition-colors flex items-start gap-3 ${
-                  !n.read ? "bg-blue-50/40" : ""
-                }`}
-              >
-                <div className="mt-0.5">
-                  <NotifIcon type={n.type} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className={`text-xs font-semibold ${!n.read ? "text-gray-900" : "text-gray-600"}`}>
-                      {n.title}
-                    </p>
-                    {!n.read && (
-                      <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400 leading-relaxed mt-0.5">{n.message}</p>
-                  <p className="text-[10px] text-gray-300 mt-1.5">{n.time}</p>
-                </div>
-              </button>
-            ))
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-3 border-t border-gray-100">
-          <button className="w-full text-xs text-gray-400 hover:text-gray-600 transition-colors text-center">
-            View all notifications
-          </button>
         </div>
       </div>
     </div>

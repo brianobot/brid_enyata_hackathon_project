@@ -18,7 +18,6 @@ import {
   Star, Building2, Globe, FileText, Shield,
   Check, X, ArrowRight,
 } from 'lucide-react';
-
 import Navbar    from '../../components/Navbar';
 import Footer    from '../../components/Footer';
 import FAQItem   from '../../components/landing/FAQItem';
@@ -59,10 +58,6 @@ const LandingPage = () => {
           onSelect={search.handleSelectBusiness}
         />
         <Footer />
-        <BusinessProfileModal
-          business={search.selectedBusiness}
-          onClose={search.handleCloseModal}
-        />
       </>
     );
   }
@@ -78,7 +73,7 @@ const LandingPage = () => {
        className="pt-36 pb-16 px-6 mb-1 bg-gradient-to-b from-slate-50 to-white text-center "
       >
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4 
+          <h1 className="text-4xl md:text-6xl text-gray-900 leading-tight mb-4 
           
             font-bold bg-gradient-to-b from-white via-slate-300 to-slate-500 bg-clip-text tracking-tight
           ">

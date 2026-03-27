@@ -7,7 +7,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { searchBusinesses } from '../services/searchService';
 
-
 export const useBusinessSearch = () => {
   const [query, setQuery]                     = useState('');
   const [dropdownResults, setDropdownResults] = useState([]);
@@ -17,7 +16,6 @@ export const useBusinessSearch = () => {
   const [showResultsPage, setShowResultsPage] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [searchError, setSearchError]         = useState(null);
-
 
   const debounceRef = useRef(null);
   const searchRef   = useRef(null);
@@ -95,7 +93,6 @@ export const useBusinessSearch = () => {
   const handleSelectBusiness = (biz) => {
     setShowDropdown(false);
     setShowResultsPage(false);
-
     setSelectedBusiness(biz);
   };
 

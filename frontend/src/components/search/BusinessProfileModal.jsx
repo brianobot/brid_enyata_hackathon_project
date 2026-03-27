@@ -6,6 +6,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Building2, MapPin, CheckCircle, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
 
 const BusinessProfileModal = ({ business, onClose }) => {
   if (!business) return null;
@@ -61,7 +63,9 @@ const BusinessProfileModal = ({ business, onClose }) => {
         {/* Actions */}
         <div className="flex gap-3">
           <button className="flex-1 bg-blue-900 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-blue-800 transition-colors">
-            View Full Profile
+            <Link to={`/profile/${business.id}`} state={{ business }}> 
+              View Full Profile
+            </Link>
           </button>
           <button
             onClick={onClose}
