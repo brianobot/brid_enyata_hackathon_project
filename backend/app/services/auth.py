@@ -287,13 +287,13 @@ async def signup_user(
 ):
     user = await create_user(data, session)
 
-    background_task.add_task(
-        send_mail,
-        subject="Welcome to {{ project_name }}",
-        receipients=[user.email],
-        payload={"username": user.email.split("@")[0].title()},
-        template="auth/welcome.html",
-    )
+    # background_task.add_task(
+    #     send_mail,
+    #     subject="Welcome to {{ project_name }}",
+    #     receipients=[user.email],
+    #     payload={"username": user.email.split("@")[0].title()},
+    #     template="auth/welcome.html",
+    # )
     return user
 
 
