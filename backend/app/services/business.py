@@ -22,25 +22,7 @@ async def search_business(keyword: str, session: AsyncSession):
     return {
         "count": 4,
         "total_pages": 1,
-        "results": list(results) + [
-            {
-                "bvn_is_verified": faker.boolean(),
-                "cac_is_verified": faker.boolean(),
-                "tin_is_verified": faker.boolean(),
-                "address_is_verified": faker.boolean(),
-                
-                "business_name": faker.company(),
-                "year_founded": faker.year(),
-                "email": faker.email(),
-                "business_phone_number": faker.phone_number(),
-                "business_address": faker.address(),
-                "business_website": faker.url(),
-                "business_description": faker.sentence(),
-            }
-            
-            for _ in range(10)
-          
-        ] 
+        "results": list(results)
     }
     
 
