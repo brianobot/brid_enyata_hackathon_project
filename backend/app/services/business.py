@@ -1,5 +1,6 @@
+
 from faker import Faker
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User as UserDB
@@ -8,7 +9,14 @@ faker = Faker()
 
 
 async def search_business(keyword: str, session: AsyncSession):
-    stmt = select(UserDB).where(UserDB.business_name.contains(keyword))
+    stmt = select(UserDB).where(
+        or_(
+            UserDB.email.contains(keyword),
+            UserDB.business_address.contains(keyword),
+            UserDB.business_name.contains(keyword),
+            UserDB.business_cac_number==keyword,
+        )
+    )
     results = (await session.execute(stmt)).scalars().all()
     
     return {
