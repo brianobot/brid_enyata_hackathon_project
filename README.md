@@ -3,6 +3,7 @@
 💻 [Live Demo Link](https://interverify.netlify.app/) <br/>
 🎨 [Design Link](https://www.figma.com/design/ynlSxgw5MA9398E9rWsNex/Interverify?node-id=19-2&p=f&t=HJ7heIpRK1UELGPz-0) <br/>
 
+
 ![Home Page Screenshot](images/homepage_screenshot.png)
 
 
@@ -77,7 +78,7 @@ InterVerify addresses the multi-billion dollar challenge of digital trust by tra
 | Component | Technology |
 | :--- | :--- |
 | Frontend  | Next.js, Tailwind CSS, TypeScript |
-| Backend   | FastAPI ([API Docs](https://brid-enyata-hackathon-project.onrender.com/docs)) |
+| Backend   | FastAPI ([API Docs](https://brid-enyata-hackathon-project-qmks.onrender.com)) |
 | Payment/Identity | Interswitch API |
 | Design | Figma |
 
