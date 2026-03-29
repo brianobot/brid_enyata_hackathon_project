@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://brid-enyata-hackathon-project.onrender.com/v1',  // Relative to your dev server, will be proxied
+  baseURL: 'https://brid-enyata-hackathon-project-qmks.onrender.com/v1',  // Relative to your dev server, will be proxied
   headers: {
     'Content-Type': 'application/json',
   },
