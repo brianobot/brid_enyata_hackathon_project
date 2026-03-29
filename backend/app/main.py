@@ -70,6 +70,7 @@ def initiate_app():
             # Add allowed hosts here
             "0551-102-90-98-19.ngrok-free.app",
             "brid-enyata-hackathon-project.onrender.com",
+            "brid-enyata-hackathon-project-qmks.onrender.com",
         ],
     )
     app.add_middleware(BaseHTTPMiddleware, dispatch=log_request_middleware)
